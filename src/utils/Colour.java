@@ -8,12 +8,13 @@ import com.jogamp.opengl.GL2;
  */
 
 public class Colour {
-    private float red = 1.0f;
-    private float green = 1.0f;
-    private float blue = 1.0f;
-    private float alpha = 1.0f;
+    public float red = 1.0f;
+    public float green = 1.0f;
+    public float blue = 1.0f;
+    public float alpha = 1.0f;
 
-    public Colour() { }
+    public Colour() {
+    }
 
     // construct rgba
     public Colour(float red, float green, float blue, float alpha) {
@@ -28,6 +29,28 @@ public class Colour {
         this.red = red;
         this.green = green;
         this.blue = blue;
+    }
+
+    public Colour add(Colour rgb) {
+        return new Colour(red + rgb.red, green + rgb.green, blue + rgb.blue);
+    }
+
+    public Colour subtract(Colour rgb) {
+        return new Colour(red - rgb.red, green - rgb.green, blue - rgb.blue);
+    }
+
+    public Colour scale(float scale) {
+        return new Colour(red * scale, green * scale, blue * scale);
+    }
+
+    private int convertToInt(double value) {
+        return (value < 0.0) ? 0 : (value > 1.0) ? 255 :
+                (int) (value * 255.0);
+    }
+
+    private int convertToColour() {
+        return (0xff << 24) | (convertToInt (red) << 16) |
+                (convertToInt (green) << 8) | convertToInt (blue);
     }
 
     public static void setColourRGBA(Colour colour, GL2 gl) {

@@ -1,7 +1,6 @@
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.glu.GLU;
-import objects.Drone;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -11,7 +10,7 @@ import java.awt.event.*;
  * studentID 16932920
  */
 
-public class TrackballCamera implements MouseWheelListener {
+public class TrackballCamera implements MouseListener, MouseMotionListener, MouseWheelListener {
 
     // some hard limitations to camera values
     private static final double MIN_DISTANCE = 1;
@@ -22,19 +21,16 @@ public class TrackballCamera implements MouseWheelListener {
     private double lookAt[] = {0, 0, 0};
 
     // the camera rotation angles
-    private double angleX = 45;
+    private double angleX = 180;
     private double angleY = 15;
 
-    //Camera Positions
-    private double camX;
-    private double camY;
-    private double camZ;
-
     // old mouse position for dragging
+    private Point oldMousePos;
+    private int mouseButton;
 
     // camera parameters
     private double fieldOfView      = 45;
-    private double distanceToOrigin = 5;
+    private double distanceToOrigin = 10;
     private double windowWidth      = 1;
     private double windowHeight     = 1;
 
@@ -48,7 +44,9 @@ public class TrackballCamera implements MouseWheelListener {
      */
 
     TrackballCamera(GLCanvas canvas) {
+        canvas.addMouseListener(this);
         canvas.addMouseWheelListener(this);
+        canvas.addMouseMotionListener(this);
     }
 
     /**
@@ -68,32 +66,20 @@ public class TrackballCamera implements MouseWheelListener {
         // setting up perspective projection
         // far distance is hardcoded to 3*cameraDistance. If your scene is bigger,
         // you might need to adapt this
-        glu.gluPerspective(fieldOfView, windowWidth / windowHeight, 0.1, distanceToOrigin * 3);
+        glu.gluPerspective(fieldOfView, windowWidth / windowHeight, 0.1, distanceToOrigin * 10);
 
         // then set up the camera position and orientation
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glLoadIdentity();
-
+        double r = distanceToOrigin * Math.cos(Math.toRadians(angleY));
+        double camZ = r * Math.cos(Math.toRadians(angleX));
+        double camX = r * Math.sin(Math.toRadians(angleX));
+        double camY = distanceToOrigin * Math.sin(Math.toRadians(angleY));
         glu.gluLookAt(
-                getX(), getY(), getZ(),                // eye
+                camX, camY, camZ,                // eye
                 lookAt[0], lookAt[1], lookAt[2], // center
-                0, 1, 0);
-
-        System.out.println(camX);
+                0, 1, 0);                        // up
     }
-
-    private double getZ() {
-        return camZ;
-    }
-
-    private double getY() {
-        return camY;
-    }
-
-    private double getX() {
-        return camX;
-    }
-
 
     /**
      * Gets the distance of the camera from the lookAt point
@@ -160,16 +146,12 @@ public class TrackballCamera implements MouseWheelListener {
         lookAt = new double[]{x, y, z};
     }
 
-    void setCamX(double camX){
-        this.camX = camX;
-    }
-
-    void setCamZ(double camZ) {
-        this.camZ = camZ;
-    }
-
-    void setCamY(double camY){
-        this.camY = camY;
+    /**
+     * Resets the camera rotations.
+     */
+    public void reset() {
+        angleX = angleY = 0;
+        oldMousePos = null;
     }
 
     /**
@@ -183,6 +165,39 @@ public class TrackballCamera implements MouseWheelListener {
     public void newWindowSize(int width, int height) {
         windowWidth = Math.max(1.0, width);
         windowHeight = Math.max(1.0, height);
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        oldMousePos = e.getPoint();
+        mouseButton = e.getButton();
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        oldMousePos = null;
+        mouseButton = -0;
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
     }
 
     @Override
