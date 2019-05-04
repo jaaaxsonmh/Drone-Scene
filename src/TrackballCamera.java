@@ -193,7 +193,17 @@ public class TrackballCamera implements MouseListener, MouseMotionListener, Mous
 
     @Override
     public void mouseDragged(MouseEvent e) {
-
+        Point p = e.getPoint();
+        if (oldMousePos != null) {
+            // dragging with left mouse button: rotate
+            if (mouseButton == MouseEvent.BUTTON1) {
+                angleX -= p.x - oldMousePos.x;
+                angleY += p.y - oldMousePos.y;
+                // limit Y rotation angle to avoid gimbal lock
+                angleY = Math.min(89.9, Math.max(-89.9, angleY));
+            } // dragging with right mouse button: change distance
+        }
+        oldMousePos = p;
     }
 
     @Override

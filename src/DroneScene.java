@@ -6,6 +6,7 @@ import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.gl2.GLUT;
 import component.Movement;
 import objects.Drone;
+import objects.Skybox;
 import utils.Colour;
 import utils.Guide;
 import utils.Lighting;
@@ -42,6 +43,7 @@ public class DroneScene implements GLEventListener, KeyListener {
 
     private TrackballCamera trackballCamera = new TrackballCamera(canvas);
     private ThirdPersonCamera camera = new ThirdPersonCamera(canvas);
+    private Skybox skybox;
     private Lighting lighting;
 
     private DroneScene() {
@@ -77,6 +79,7 @@ public class DroneScene implements GLEventListener, KeyListener {
 
         lighting.drawDroneSpotlight(gl, spotLightPosition);
 
+        skybox.draw(gl, glu, quadric, filled);
         drone.animate(animatorSpeed);
 
         gl.glEnable(GL.GL_BLEND);
@@ -158,6 +161,7 @@ public class DroneScene implements GLEventListener, KeyListener {
         glu = new GLU();
         quadric = glu.gluNewQuadric();
         guide = new Guide();
+        skybox = new Skybox();
 
         trackballCamera.setDistance(15);
         trackballCamera.setFieldOfView(40);
