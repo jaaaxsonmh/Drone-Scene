@@ -43,7 +43,7 @@ public class Skybox implements Drawable {
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, greyMaterial, 0);
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, whiteMaterial, 0);
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, greyMaterial, 0);
-        gl.glMaterialf(GL2.GL_FRONT, GL2.GL_SHININESS, 20.0f);
+        gl.glMaterialf(GL2.GL_FRONT, GL2.GL_SHININESS, 50.0f);
     }
 
 
@@ -56,8 +56,11 @@ public class Skybox implements Drawable {
         Colour.setColourRGBA(white, gl);
 
         gl.glScaled(50.0, 50.0, 50.0);
+        //Rotate Sphere so that
+        gl.glRotated(180, 0, 1, 0);
+        gl.glRotated(-90, 1, 0, 0);
         glu.gluQuadricTexture(quadric, true);
-        glu.gluSphere(quadric, 1.0, 50, 20);
+        glu.gluSphere(quadric, 1.0, 50, 40);
 
         gl.glPopMatrix();
         skyDome.disable(gl);

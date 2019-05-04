@@ -1,3 +1,5 @@
+import cameras.ThirdPersonCamera;
+import cameras.TrackballCamera;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.glu.GLU;
@@ -112,19 +114,19 @@ public class DroneScene implements GLEventListener, KeyListener {
                 // makes a 1x1 square grid.
                 gl.glNormal3f(0.0f, 1.0f, 0.0f);
                 gl.glTexCoord2d(2, 1);
-                gl.glVertex3f(i, -1, j);
+                gl.glVertex3f(i, 0, j);
 
                 gl.glNormal3f(0.0f, 1.0f, 0.0f);
                 gl.glTexCoord2d(2, 2);
-                gl.glVertex3d(i + 1, -1, j);
+                gl.glVertex3d(i + 1, 0, j);
 
                 gl.glNormal3f(0, 1.0f, 0);
                 gl.glTexCoord2d(1, 2);
-                gl.glVertex3d(i + 1, -1, j + 1);
+                gl.glVertex3d(i + 1, 0, j + 1);
 
                 gl.glNormal3f(0, 1.0f, 0);
                 gl.glTexCoord2d(1, 1);
-                gl.glVertex3d(i, -1, j + 1);
+                gl.glVertex3d(i, 0, j + 1);
 
                 gl.glEnd();
             }

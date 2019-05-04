@@ -22,7 +22,7 @@ public class Drone implements Drawable {
     private final Colour pupil = new Colour(0.0f, 0.0f, 0.0f, 1.0f);
 
     private float x;
-    private float y;
+    private float y = 5;
     private float z;
 
     private float height;

@@ -1,3 +1,5 @@
+package cameras;
+
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.glu.GLU;
@@ -43,7 +45,7 @@ public class TrackballCamera implements MouseListener, MouseMotionListener, Mous
      * @param canvas the GL drawable context to register this camera with
      */
 
-    TrackballCamera(GLCanvas canvas) {
+    public TrackballCamera(GLCanvas canvas) {
         canvas.addMouseListener(this);
         canvas.addMouseWheelListener(this);
         canvas.addMouseMotionListener(this);
@@ -85,7 +87,7 @@ public class TrackballCamera implements MouseListener, MouseMotionListener, Mous
      * Gets the distance of the camera from the lookAt point
      * @return the distance of the camera from the lookAt point
      */
-    double getDistance() {
+    public double getDistance() {
         return distanceToOrigin;
     }
 
@@ -93,7 +95,7 @@ public class TrackballCamera implements MouseListener, MouseMotionListener, Mous
      * Sets the distance of the camera to the lookAt point.
      * @param dist the new distance of the camera to the lookAt point
      */
-    void setDistance(double dist) {
+    public void setDistance(double dist) {
         distanceToOrigin = dist;
         limitDistance();
     }
@@ -111,7 +113,7 @@ public class TrackballCamera implements MouseListener, MouseMotionListener, Mous
      * Gets the field of view angle of the camera
      * @return the field of view of the camera in degrees
      */
-    double getFieldOfView() {
+    public double getFieldOfView() {
         return fieldOfView;
     }
 
@@ -119,7 +121,7 @@ public class TrackballCamera implements MouseListener, MouseMotionListener, Mous
      * Sets the field of view angle of the camera.
      * @param fov the new field of view angle of the camera in degrees
      */
-    void setFieldOfView(double fov) {
+    public void setFieldOfView(double fov) {
         fieldOfView = fov;
         limitFieldOfView();
     }
@@ -142,7 +144,7 @@ public class TrackballCamera implements MouseListener, MouseMotionListener, Mous
      * @param y Y coordinate of the lookAt point
      * @param z Z coordinate of the lookAt point
      */
-    void setLookAt(double x, double y, double z) {
+    public void setLookAt(double x, double y, double z) {
         lookAt = new double[]{x, y, z};
     }
 

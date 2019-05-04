@@ -1,3 +1,5 @@
+package cameras;
+
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.glu.GLU;
@@ -20,10 +22,6 @@ public class ThirdPersonCamera implements MouseWheelListener {
     // the point to look at
     private double lookAt[] = {0, 0, 0};
 
-    // the camera rotation angles
-    private double angleX = 45;
-    private double angleY = 15;
-
     //Camera Positions
     private double camX;
     private double camY;
@@ -32,10 +30,10 @@ public class ThirdPersonCamera implements MouseWheelListener {
     // old mouse position for dragging
 
     // camera parameters
-    private double fieldOfView      = 45;
+    private double fieldOfView = 45;
     private double distanceToOrigin = 5;
-    private double windowWidth      = 1;
-    private double windowHeight     = 1;
+    private double windowWidth = 1;
+    private double windowHeight = 1;
 
     // GLU context
     private GLU glu = new GLU();
@@ -43,10 +41,11 @@ public class ThirdPersonCamera implements MouseWheelListener {
 
     /**
      * Constructor of the trackball camera
+     *
      * @param canvas the GL drawable context to register this camera with
      */
 
-    ThirdPersonCamera(GLCanvas canvas) {
+    public ThirdPersonCamera(GLCanvas canvas) {
         canvas.addMouseWheelListener(this);
     }
 
@@ -67,7 +66,7 @@ public class ThirdPersonCamera implements MouseWheelListener {
         // setting up perspective projection
         // far distance is hardcoded to 3*cameraDistance. If your scene is bigger,
         // you might need to adapt this
-        glu.gluPerspective(fieldOfView, windowWidth / windowHeight, 0.1, distanceToOrigin * 3);
+        glu.gluPerspective(fieldOfView, windowWidth / windowHeight, 0.1, distanceToOrigin * 10);
 
         // then set up the camera position and orientation
         gl.glMatrixMode(GL2.GL_MODELVIEW);
@@ -96,17 +95,19 @@ public class ThirdPersonCamera implements MouseWheelListener {
 
     /**
      * Gets the distance of the camera from the lookAt point
+     *
      * @return the distance of the camera from the lookAt point
      */
-    double getDistance() {
+    public double getDistance() {
         return distanceToOrigin;
     }
 
     /**
      * Sets the distance of the camera to the lookAt point.
+     *
      * @param dist the new distance of the camera to the lookAt point
      */
-    void setDistance(double dist) {
+    public void setDistance(double dist) {
         distanceToOrigin = dist;
         limitDistance();
     }
@@ -122,17 +123,19 @@ public class ThirdPersonCamera implements MouseWheelListener {
 
     /**
      * Gets the field of view angle of the camera
+     *
      * @return the field of view of the camera in degrees
      */
-    double getFieldOfView() {
+    public double getFieldOfView() {
         return fieldOfView;
     }
 
     /**
      * Sets the field of view angle of the camera.
+     *
      * @param fov the new field of view angle of the camera in degrees
      */
-    void setFieldOfView(double fov) {
+    public void setFieldOfView(double fov) {
         fieldOfView = fov;
         limitFieldOfView();
     }
@@ -151,23 +154,24 @@ public class ThirdPersonCamera implements MouseWheelListener {
 
     /**
      * Sets up the lookAt point
+     *
      * @param x X coordinate of the lookAt point
      * @param y Y coordinate of the lookAt point
      * @param z Z coordinate of the lookAt point
      */
-    void setLookAt(double x, double y, double z) {
+    public void setLookAt(double x, double y, double z) {
         lookAt = new double[]{x, y, z};
     }
 
-    void setCamX(double camX){
+    public void setCamX(double camX) {
         this.camX = camX;
     }
 
-    void setCamZ(double camZ) {
+    public void setCamZ(double camZ) {
         this.camZ = camZ;
     }
 
-    void setCamY(double camY){
+    public void setCamY(double camY) {
         this.camY = camY;
     }
 
@@ -176,7 +180,7 @@ public class ThirdPersonCamera implements MouseWheelListener {
      * This method should be called from the <code>reshape()</code> method
      * of the main program.
      *
-     * @param width the new window width in pixels
+     * @param width  the new window width in pixels
      * @param height the new window height in pixels
      */
     public void newWindowSize(int width, int height) {
