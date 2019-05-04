@@ -21,11 +21,9 @@ public class Drone implements Drawable {
     private final Colour white = new Colour(1.0f, 1.0f, 1.0f, 1.0f);
     private final Colour pupil = new Colour(0.0f, 0.0f, 0.0f, 1.0f);
 
-    private float rotation = 0;
     private float x;
     private float y;
     private float z;
-    private float vx = Rand.getFloatBetween(0.002f, 0.005f), vy = Rand.getFloatBetween(0.002f, 0.005f), vz = Rand.getFloatBetween(0.002f, 0.005f);
 
     private float height;
     private float radius;
@@ -54,6 +52,7 @@ public class Drone implements Drawable {
 
 //        drawDroneLightHolder();
 //        drawDroneLight();
+
         // Construct the right arm shape
         drawDroneRightArm();
         drawDroneRightArmElbow();
@@ -166,9 +165,6 @@ public class Drone implements Drawable {
             y -= 0.02f * speed;
         } else if (verticalMovementState == Movement.UPWARDS) {
             y += 0.02f * speed;
-            // increase blade rotation speed by double
-            // imitate increase in revolutions in rotors for increased lift (upwards movement)
-            bladeRotation += 4.0f * speed;
         }
 
         if (turningState == Movement.RIGHT_TURN) {
@@ -181,17 +177,13 @@ public class Drone implements Drawable {
         if (horizontalMovementState == Movement.FORWARD) {
             x += 0.05f * Math.sin(Math.toRadians(droneRootRotation));
             z += 0.05f * Math.cos(Math.toRadians(droneRootRotation));
-            bladeRotation += 4.0f * speed;
         } else if (horizontalMovementState == Movement.BACKWARD) {
             x -= 0.05f * Math.sin(Math.toRadians(droneRootRotation));
             z -= 0.05f * Math.cos(Math.toRadians(droneRootRotation));
-
-            // increase blade rotation speed by double
-            // imitate increase in revolutions in rotors for increased lift (upwards movement)
-            bladeRotation += 4.0f * speed;
         }
 
-
+        if(horizontalMovementState != Movement.HOVER || turningState != Movement.HOVER || verticalMovementState != Movement.HOVER)
+            bladeRotation += 4.0f * speed;
     }
 
     public void setHorizontalMovement(Movement horizontalMovementState) {

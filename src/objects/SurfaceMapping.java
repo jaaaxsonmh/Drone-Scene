@@ -70,7 +70,6 @@ public class SurfaceMapping implements Drawable {
             for (int j = 0; j < height; j++) {
                 gl.glBegin(filled ? GL2.GL_TRIANGLE_STRIP : GL.GL_LINE_LOOP);
 
-
                 // makes a 1x1 square grid.
                 gl.glNormal3f(0.0f, 1.0f, 0.0f);
                 gl.glTexCoord2d(2, 1);

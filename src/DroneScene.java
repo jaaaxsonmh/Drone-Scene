@@ -79,9 +79,14 @@ public class DroneScene implements GLEventListener, KeyListener {
 
         drone.animate(animatorSpeed);
 
-        drawSurface(gl);
-        drone.draw(gl, glu, quadric, filled);
+        gl.glEnable(GL.GL_BLEND);
+        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
+        drawSurface(gl);
+
+        gl.glDisable(GL2.GL_COLOR_MATERIAL);
+        drone.draw(gl, glu, quadric, filled);
+        gl.glEnable(GL2.GL_COLOR_MATERIAL);
 
         if (guideEnabled) {
             guide.draw(gl, glu, quadric, filled);
@@ -153,6 +158,7 @@ public class DroneScene implements GLEventListener, KeyListener {
         glu = new GLU();
         quadric = glu.gluNewQuadric();
         guide = new Guide();
+
         trackballCamera.setDistance(15);
         trackballCamera.setFieldOfView(40);
 
@@ -309,7 +315,7 @@ public class DroneScene implements GLEventListener, KeyListener {
         }
 
         if (key == KeyEvent.VK_1) {
-            if (animatorSpeed == 1.5) {
+            if (animatorSpeed == 1.0) {
                 System.out.println("\nSlow animator already enabled");
                 System.out.println("Animator Speed: " + animatorSpeed + "");
             } else {
@@ -335,7 +341,7 @@ public class DroneScene implements GLEventListener, KeyListener {
                 System.out.println("\nFast animator already enabled");
                 System.out.println("Animator Speed: " + animatorSpeed);
             } else {
-                animatorSpeed = 2.0f;
+                animatorSpeed = 3.0f;
                 System.out.println("\nFast animator enabled");
                 System.out.println("Animator Speed: " + animatorSpeed);
             }
