@@ -22,7 +22,7 @@ public class Skybox implements Drawable {
 
     public Skybox() {
         try {
-            skyDome = TextureIO.newTexture(new File("src\\src\\images\\skydome.jpg"), true);
+            skyDome = TextureIO.newTexture(new File("src\\images\\skydome.jpg"), true);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

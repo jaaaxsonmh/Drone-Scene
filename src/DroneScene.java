@@ -49,6 +49,7 @@ public class DroneScene implements GLEventListener, KeyListener {
     private Lighting lighting;
     private SurfaceMapping waterSurfaceTexture;
     private TerrainHeightMap terrainMap;
+    private float CAMERA_HEIGHT = 1;
 
     private DroneScene() {
         drone = new Drone(1.0f);
@@ -93,12 +94,12 @@ public class DroneScene implements GLEventListener, KeyListener {
             guide.draw(gl, glu, quadric, filled);
         }
 
-        if (drone.getY() + 1.0 < 0) {
+        if (cameraSwitch && drone.getY() + CAMERA_HEIGHT < 0) {
             setUpFog(gl, positionRelativeToCam);
-
-        } else if (drone.getY() + 1.0 > 0) {
+        } else if (cameraSwitch && drone.getY() + CAMERA_HEIGHT > 0) {
             gl.glDisable(GL2.GL_FOG);
         }
+
 
         gl.glFlush();
     }
@@ -144,7 +145,7 @@ public class DroneScene implements GLEventListener, KeyListener {
             camera.setDistance(10);
             camera.setCamZ(drone.getZ() - 4.0 * Math.cos(Math.toRadians(drone.getRotation())));
             camera.setCamX(drone.getX() - 4.0 * Math.sin(Math.toRadians(drone.getRotation())));
-            camera.setCamY(drone.getY() + 1.0);
+            camera.setCamY(drone.getY() + CAMERA_HEIGHT);
         }
     }
 
@@ -164,9 +165,9 @@ public class DroneScene implements GLEventListener, KeyListener {
         quadric = glu.gluNewQuadric();
         guide = new Guide();
         skybox = new Skybox();
-        terrainMap = new TerrainHeightMap("src\\src\\images\\terrain.png");
+        terrainMap = new TerrainHeightMap("src\\images\\terrain.png");
 
-        waterSurfaceTexture = new SurfaceMapping(0, "src\\src\\images\\water-pool-texture-seamless.jpg");
+        waterSurfaceTexture = new SurfaceMapping(0, "src\\images\\water-pool-texture-seamless.jpg");
         waterSurfaceTexture.setTransparency(0.9f);
         trackballCamera.setDistance(15);
         trackballCamera.setFieldOfView(40);
@@ -200,17 +201,21 @@ public class DroneScene implements GLEventListener, KeyListener {
         frame.setResizable(false);
 
         // key mapping console prints
-        System.out.println("------- Key mapping -------");
+        System.out.println("------ Little Notes ------");
+        System.out.println("Rotation third person camera is for debugging purposes,\nwill not give the same scene interaction as the regular fixed third-person camera");
+        System.out.println("Navigation throughout the map is done by the arrow keys,\nthe drone has speed settings that will increase the angle of attack and speed.");
+        System.out.println("-- Character Interaction --");
+        System.out.println("W: Forward movement");
+        System.out.println("S: Backward movement");
+        System.out.println("A: Left turn --- D: Right turn");
+        System.out.println("Up Arrow: Up --- Down Arrow: Down");
+        System.out.println("1: Slow revolutions");
+        System.out.println("2: Medium revolutions");
+        System.out.println("3: Fast revolutions");
+        System.out.println("------- Util Keys --------");
         System.out.println("E: Wireframe");
         System.out.println("G: X/Y/Z Guides");
         System.out.println("SPACE: Switch Camera Mode");
-        System.out.println("1: Slow");
-        System.out.println("2: NORMAL ANIMATION SPEED");
-        System.out.println("3: FAST ANIMATION SPEED");
-        System.out.println("======= DISABLED =======");
-        System.out.println("A / Z: Increase and decrease length");
-        System.out.println("S / X: Increase and decrease width");
-        System.out.println("D / C: Increase and decrease height\n");
         System.out.println("---- Console debugging ----");
 
         GLProfile profile = GLProfile.get(GLProfile.GL2);

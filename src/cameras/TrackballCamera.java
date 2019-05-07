@@ -33,6 +33,7 @@ public class TrackballCamera implements MouseListener, MouseMotionListener, Mous
     private double distanceToOrigin = 10;
     private double windowWidth = 1;
     private double windowHeight = 1;
+    private double camY;
 
     // GLU context
     private GLU glu = new GLU();
@@ -69,13 +70,17 @@ public class TrackballCamera implements MouseListener, MouseMotionListener, Mous
         gl.glLoadIdentity();
         double r = distanceToOrigin * Math.cos(Math.toRadians(angleY));
         double camX = (lookAt[0]) + r * Math.sin(Math.toRadians(angleX));
-        double camY = (lookAt[1]) + distanceToOrigin * Math.sin(Math.toRadians(angleY));
+        camY = (lookAt[1]) + distanceToOrigin * Math.sin(Math.toRadians(angleY));
         double camZ = (lookAt[2]) + r * Math.cos(Math.toRadians(angleX));
 
         glu.gluLookAt(
                 camX, camY, camZ, // eye
                 lookAt[0], lookAt[1], lookAt[2], // center
                 0, 1, 0);                        // up
+    }
+
+    public double getCamY() {
+        return camY;
     }
 
     /**

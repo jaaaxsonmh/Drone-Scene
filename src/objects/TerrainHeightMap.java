@@ -39,8 +39,8 @@ public class TerrainHeightMap implements Drawable {
         height = bufferedImage.getHeight();
         heightMap = new double[height][width];
         //for loop for to rgb /height width/
-        int rgb = bufferedImage.getRGB(width, height);
-        int grey = rgb & 255;
+//        int rgb = bufferedImage.getRGB(width, height);
+//        int grey = rgb & 255;
     }
 
     private void setHeightMap(String heightMap) throws IOException {
