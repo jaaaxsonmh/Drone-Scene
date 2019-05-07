@@ -169,7 +169,6 @@ public class Drone implements Drawable {
 
         if (turningState == Movement.RIGHT_TURN) {
             droneRootRotation -= 1.0f * speed;
-
         } else if (turningState == Movement.LEFT_TURN) {
             droneRootRotation += 1.0f * speed;
         }

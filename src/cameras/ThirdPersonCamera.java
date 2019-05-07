@@ -76,8 +76,6 @@ public class ThirdPersonCamera implements MouseWheelListener {
                 getX(), getY(), getZ(),                // eye
                 lookAt[0], lookAt[1], lookAt[2], // center
                 0, 1, 0);
-
-        System.out.println(camX);
     }
 
     private double getZ() {

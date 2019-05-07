@@ -8,10 +8,8 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * @author Jack Hosking
- * studentID 16932920
+ * @author Jack Hosking studentID 16932920
  */
-
 public class TrackballCamera implements MouseListener, MouseMotionListener, MouseWheelListener {
 
     // some hard limitations to camera values
@@ -31,20 +29,19 @@ public class TrackballCamera implements MouseListener, MouseMotionListener, Mous
     private int mouseButton;
 
     // camera parameters
-    private double fieldOfView      = 45;
+    private double fieldOfView = 45;
     private double distanceToOrigin = 10;
-    private double windowWidth      = 1;
-    private double windowHeight     = 1;
+    private double windowWidth = 1;
+    private double windowHeight = 1;
 
     // GLU context
     private GLU glu = new GLU();
 
-
     /**
      * Constructor of the trackball camera
+     *
      * @param canvas the GL drawable context to register this camera with
      */
-
     public TrackballCamera(GLCanvas canvas) {
         canvas.addMouseListener(this);
         canvas.addMouseWheelListener(this);
@@ -52,12 +49,9 @@ public class TrackballCamera implements MouseListener, MouseMotionListener, Mous
     }
 
     /**
-     * "Draws" the camera.
-     * This sets up the projection matrix and
-     * the camera position and orientation.
-     * This method has to be called first thing
-     * in the <code>display()</code> method
-     * of the main program
+     * "Draws" the camera. This sets up the projection matrix and the camera
+     * position and orientation. This method has to be called first thing in the
+     * <code>display()</code> method of the main program
      *
      * @param gl then OpenGL context to draw the camera in
      */
@@ -74,17 +68,19 @@ public class TrackballCamera implements MouseListener, MouseMotionListener, Mous
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glLoadIdentity();
         double r = distanceToOrigin * Math.cos(Math.toRadians(angleY));
-        double camZ = r * Math.cos(Math.toRadians(angleX));
-        double camX = r * Math.sin(Math.toRadians(angleX));
-        double camY = distanceToOrigin * Math.sin(Math.toRadians(angleY));
+        double camX = (lookAt[0]) + r * Math.sin(Math.toRadians(angleX));
+        double camY = (lookAt[1]) + distanceToOrigin * Math.sin(Math.toRadians(angleY));
+        double camZ = (lookAt[2]) + r * Math.cos(Math.toRadians(angleX));
+
         glu.gluLookAt(
-                camX, camY, camZ,                // eye
+                camX, camY, camZ, // eye
                 lookAt[0], lookAt[1], lookAt[2], // center
                 0, 1, 0);                        // up
     }
 
     /**
      * Gets the distance of the camera from the lookAt point
+     *
      * @return the distance of the camera from the lookAt point
      */
     public double getDistance() {
@@ -93,6 +89,7 @@ public class TrackballCamera implements MouseListener, MouseMotionListener, Mous
 
     /**
      * Sets the distance of the camera to the lookAt point.
+     *
      * @param dist the new distance of the camera to the lookAt point
      */
     public void setDistance(double dist) {
@@ -111,6 +108,7 @@ public class TrackballCamera implements MouseListener, MouseMotionListener, Mous
 
     /**
      * Gets the field of view angle of the camera
+     *
      * @return the field of view of the camera in degrees
      */
     public double getFieldOfView() {
@@ -119,6 +117,7 @@ public class TrackballCamera implements MouseListener, MouseMotionListener, Mous
 
     /**
      * Sets the field of view angle of the camera.
+     *
      * @param fov the new field of view angle of the camera in degrees
      */
     public void setFieldOfView(double fov) {
@@ -140,6 +139,7 @@ public class TrackballCamera implements MouseListener, MouseMotionListener, Mous
 
     /**
      * Sets up the lookAt point
+     *
      * @param x X coordinate of the lookAt point
      * @param y Y coordinate of the lookAt point
      * @param z Z coordinate of the lookAt point
@@ -157,9 +157,8 @@ public class TrackballCamera implements MouseListener, MouseMotionListener, Mous
     }
 
     /**
-     * Passes a new window size to the camera.
-     * This method should be called from the <code>reshape()</code> method
-     * of the main program.
+     * Passes a new window size to the camera. This method should be called from
+     * the <code>reshape()</code> method of the main program.
      *
      * @param width the new window width in pixels
      * @param height the new window height in pixels
@@ -226,6 +225,5 @@ public class TrackballCamera implements MouseListener, MouseMotionListener, Mous
         }
         limitFieldOfView();
     }
-
 
 }

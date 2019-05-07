@@ -26,17 +26,15 @@ public class SurfaceMapping implements Drawable {
 
     private float yPos;
     private BufferedImage bufferedImage;
-    private Image heightMap;
     private Texture surfaceTexture;
     private float transparency = 1.0f;
 
-    public SurfaceMapping(float yPos, String textureSurface, String heightMap) {
+    public SurfaceMapping(float yPos, String textureSurface) {
         this.yPos = yPos;
         boolean texture = !textureSurface.isEmpty();
         if (texture) {
             try {
                 setSurfaceTexture(textureSurface);
-                setHeightMap(heightMap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -47,28 +45,22 @@ public class SurfaceMapping implements Drawable {
         this.surfaceTexture = TextureIO.newTexture(new FileInputStream(surfaceTexture), false, ".jpg");
     }
 
-    private void setHeightMap(String heightMap) throws IOException {
-        this.bufferedImage = ImageIO.read(new File(heightMap));
-    }
-
     public void setTransparency(float transparency) {
         this.transparency = transparency;
     }
 
     @Override
     public void draw(GL2 gl, GLU glu, GLUquadric quadric, boolean filled) {
-
-        int width = bufferedImage.getWidth();
-        int height = bufferedImage.getHeight();
-        System.out.println(width);
-        System.out.println(height);
+        surfaceTexture.enable(gl);
+        surfaceTexture.bind(gl);
+        surfaceTexture.setTexParameteri(gl, GL.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
+        surfaceTexture.setTexParameteri(gl, GL.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
 
         Colour.setDynamicColourRGBA(new Colour(1.0f, 1.0f, 1.0f), transparency, gl);
 
-        // System.out.println((int)length +" " + (int) width);
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                gl.glBegin(filled ? GL2.GL_TRIANGLE_STRIP : GL.GL_LINE_LOOP);
+        for (int i = -50; i < 50; i++) {
+            for (int j = -50; j < 50; j++) {
+                gl.glBegin(filled ? GL2.GL_QUADS : GL.GL_LINE_LOOP);
 
                 // makes a 1x1 square grid.
                 gl.glNormal3f(0.0f, 1.0f, 0.0f);
@@ -90,5 +82,6 @@ public class SurfaceMapping implements Drawable {
                 gl.glEnd();
             }
         }
+        surfaceTexture.disable(gl);
     }
 }

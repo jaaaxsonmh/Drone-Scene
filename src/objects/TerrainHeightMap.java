@@ -18,29 +18,30 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * @author Jack Hosking
- * studentID 16932920
+ * @author Jack Hosking studentID 16932920
  */
-
 public class TerrainHeightMap implements Drawable {
 
-    private float yPos;
     private BufferedImage bufferedImage;
-    private Image heightMap;
+    private Image map;
+    private double[][] heightMap;
+    private int width, height;
     private float transparency = 1.0f;
 
-    public TerrainHeightMap(float yPos, String heightMap) {
-        this.yPos = yPos;
-        boolean texture = !heightMap.isEmpty();
-        if (texture) {
-            try {
-                setHeightMap(heightMap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    public TerrainHeightMap(String map) {
+        try {
+            setHeightMap(map);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    }
 
+        width = bufferedImage.getWidth();
+        height = bufferedImage.getHeight();
+        heightMap = new double[height][width];
+        //for loop for to rgb /height width/
+        int rgb = bufferedImage.getRGB(width, height);
+        int grey = rgb & 255;
+    }
 
     private void setHeightMap(String heightMap) throws IOException {
         this.bufferedImage = ImageIO.read(new File(heightMap));
@@ -52,38 +53,43 @@ public class TerrainHeightMap implements Drawable {
 
     @Override
     public void draw(GL2 gl, GLU glu, GLUquadric quadric, boolean filled) {
-
-        int width = bufferedImage.getWidth();
-        int height = bufferedImage.getHeight();
-        System.out.println(width);
-        System.out.println(height);
-
+        //start displaylist gl.
         Colour.setDynamicColourRGBA(new Colour(1.0f, 1.0f, 1.0f), transparency, gl);
-
         // System.out.println((int)length +" " + (int) width);
         for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                gl.glBegin(filled ? GL2.GL_TRIANGLE_STRIP : GL.GL_LINE_LOOP);
+            // being (strip)
+            gl.glBegin(filled ? GL2.GL_TRIANGLE_STRIP : GL.GL_LINE_LOOP);
 
-                // makes a 1x1 square grid.
-                gl.glNormal3f(0.03f, 1.0f, 0.0f);
+            for (int j = 0; j < height; j++) {
+
+                // t
+                // n
+                // v (x, z)
+                
+                // t
+                // n
+                // v (x, z + 1)
+                
+                gl.glNormal3f(0.0f, 1.0f, 0.0f);
                 gl.glTexCoord2d(2, 1);
-                gl.glVertex3f(i, yPos, j);
+                gl.glVertex3f(i, 0, j);
 
                 gl.glNormal3f(0.0f, 1.0f, 0.0f);
-                gl.glTexCoord2d(2 , 2);
-                gl.glVertex3d(i + 1, yPos, j);
+                gl.glTexCoord2d(2, 2);
+                gl.glVertex3d(i + 1, 0, j);
 
                 gl.glNormal3f(0, 1.0f, 0);
                 gl.glTexCoord2d(1, 2);
-                gl.glVertex3d(i + 1, yPos / 0.5, j + 1);
+                gl.glVertex3d(i + 1, 0, j + 1);
 
                 gl.glNormal3f(0, 1.0f, 0);
                 gl.glTexCoord2d(1, 1);
-                gl.glVertex3d(i, yPos * 0.5, j + 1);
+                gl.glVertex3d(i, 0, j + 1);
 
-                gl.glEnd();
             }
+            gl.glEnd();
         }
+
+        // flush display list
     }
 }

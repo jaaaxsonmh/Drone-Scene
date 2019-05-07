@@ -1,3 +1,4 @@
+
 import cameras.ThirdPersonCamera;
 import cameras.TrackballCamera;
 import com.jogamp.opengl.*;
@@ -19,26 +20,25 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import objects.SurfaceMapping;
+import objects.TerrainHeightMap;
 
 /**
- * @author Jack Hosking
- * studentID 16932920
+ * @author Jack Hosking studentID 16932920
  */
-
 public class DroneScene implements GLEventListener, KeyListener {
 
     private Guide guide;
     private Drone drone;
 
-    private static final float[] fogColour = new float[]{0.95f, 0.95f, 0.95f};
-
-
+    private static final float[] FOG_COLOUR = new float[]{0.0f, 0.89803f, 0.98823f, 0.2f};
+    private final Colour WATER_COLOUR = new Colour(0.73333f, 0.87058823529f, 0.98823f, 0.2f);
     private static GLCanvas canvas;
 
     private GLUT glut;
     private GLU glu;
     private GLUquadric quadric;
-    private boolean filled = true, animateEnabled = true, guideEnabled = false;
+    private boolean filled = true, cameraSwitch = false, guideEnabled = false;
     private float animatorSpeed = 1.0f;
     private final long TIME_DELAY = 300L;
     public Material materials = new Material();
@@ -47,12 +47,12 @@ public class DroneScene implements GLEventListener, KeyListener {
     private ThirdPersonCamera camera = new ThirdPersonCamera(canvas);
     private Skybox skybox;
     private Lighting lighting;
+    private SurfaceMapping waterSurfaceTexture;
+    private TerrainHeightMap terrainMap;
 
     private DroneScene() {
-
         drone = new Drone(1.0f);
         glut = new GLUT();
-
     }
 
     @Override
@@ -64,11 +64,11 @@ public class DroneScene implements GLEventListener, KeyListener {
 
         // select and clear the model-view matrix
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+        gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glLoadIdentity();
 
-        productionMode(gl, animateEnabled);
-
+        productionMode(gl, cameraSwitch);
 
         // change the rendering style based on key presses
         int style = filled ? GLU.GLU_FILL : GLU.GLU_LINE;
@@ -78,55 +78,55 @@ public class DroneScene implements GLEventListener, KeyListener {
         spotLightPosition[0] = (float) (drone.getX() + 2.0f * Math.sin(Math.toRadians(drone.getRotation())));
         spotLightPosition[1] = (drone.getY());
         spotLightPosition[2] = (float) (drone.getZ() + 2.0f * Math.cos(Math.toRadians(drone.getRotation())));
-
         lighting.drawDroneSpotlight(gl, spotLightPosition);
 
         skybox.draw(gl, glu, quadric, filled);
         drone.animate(animatorSpeed);
-
-        gl.glEnable(GL.GL_BLEND);
-        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-
-        drawSurface(gl);
-
-        gl.glDisable(GL2.GL_COLOR_MATERIAL);
         drone.draw(gl, glu, quadric, filled);
-        gl.glEnable(GL2.GL_COLOR_MATERIAL);
 
+        gl.glEnable(GL2.GL_BLEND);
+        waterSurfaceTexture.draw(gl, glu, quadric, filled);
+        gl.glDisable(GL2.GL_BLEND);
+
+        drawSurface(gl, 2);
         if (guideEnabled) {
             guide.draw(gl, glu, quadric, filled);
         }
 
-        setUpFog(gl, positionRelativeToCam);
+        if (drone.getY() + 1.0 < 0) {
+            setUpFog(gl, positionRelativeToCam);
+
+        } else if (drone.getY() + 1.0 > 0) {
+            gl.glDisable(GL2.GL_FOG);
+        }
 
         gl.glFlush();
     }
 
     private final Colour white = new Colour(1.0f, 1.0f, 1.0f, 1.0f);
 
-
-    private void drawSurface(GL2 gl) {
-        for (int i = -200; i < 200; i++) {
-            for (int j = -200; j < 200; j++) {
+    private void drawSurface(GL2 gl, int height) {
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 20; j++) {
                 gl.glBegin(filled ? GL2.GL_QUADS : GL.GL_LINE_LOOP);
 
-                Colour.setColourRGBA(white, gl);
+                Colour.setColourRGBA(WATER_COLOUR, gl);
                 // makes a 1x1 square grid.
                 gl.glNormal3f(0.0f, 1.0f, 0.0f);
                 gl.glTexCoord2d(2, 1);
-                gl.glVertex3f(i, 0, j);
+                gl.glVertex3f(i, height, j);
 
                 gl.glNormal3f(0.0f, 1.0f, 0.0f);
                 gl.glTexCoord2d(2, 2);
-                gl.glVertex3d(i + 1, 0, j);
+                gl.glVertex3d(i + 1, height, j);
 
                 gl.glNormal3f(0, 1.0f, 0);
                 gl.glTexCoord2d(1, 2);
-                gl.glVertex3d(i + 1, 0, j + 1);
+                gl.glVertex3d(i + 1, height, j + 1);
 
                 gl.glNormal3f(0, 1.0f, 0);
                 gl.glTexCoord2d(1, 1);
-                gl.glVertex3d(i, 0, j + 1);
+                gl.glVertex3d(i, height, j + 1);
 
                 gl.glEnd();
             }
@@ -164,7 +164,10 @@ public class DroneScene implements GLEventListener, KeyListener {
         quadric = glu.gluNewQuadric();
         guide = new Guide();
         skybox = new Skybox();
+        terrainMap = new TerrainHeightMap("src\\src\\images\\terrain.png");
 
+        waterSurfaceTexture = new SurfaceMapping(0, "src\\src\\images\\water-pool-texture-seamless.jpg");
+        waterSurfaceTexture.setTransparency(0.9f);
         trackballCamera.setDistance(15);
         trackballCamera.setFieldOfView(40);
 
@@ -183,11 +186,12 @@ public class DroneScene implements GLEventListener, KeyListener {
     }
 
     private void setUpFog(GL2 gl, float positionRelativeToCam) {
-        float fogDensity = 0.0f;
+        float fogDensity = 0.03f;
 
         gl.glEnable(GL2.GL_FOG);
-        gl.glFogfv(GL2.GL_FOG_COLOR, fogColour, 0);
-        gl.glFogf(GL2.GL_FOG_MODE, GL2.GL_EXP2);
+        gl.glFogfv(GL2.GL_FOG_COLOR, FOG_COLOUR, 0);
+        gl.glFogf(GL2.GL_FOG_MODE, GL2.GL_EXP);
+        gl.glFogf(GL2.GL_FOG_START, 1);
         gl.glFogf(GL2.GL_FOG_DENSITY, fogDensity);
     }
 
@@ -196,12 +200,11 @@ public class DroneScene implements GLEventListener, KeyListener {
         frame.setResizable(false);
 
         // key mapping console prints
-
         System.out.println("------- Key mapping -------");
-        System.out.println("W: Wireframe");
+        System.out.println("E: Wireframe");
         System.out.println("G: X/Y/Z Guides");
-        System.out.println("SPACE: pause/restart");
-        System.out.println("1: SLOW ANIMATION SPEED");
+        System.out.println("SPACE: Switch Camera Mode");
+        System.out.println("1: Slow");
         System.out.println("2: NORMAL ANIMATION SPEED");
         System.out.println("3: FAST ANIMATION SPEED");
         System.out.println("======= DISABLED =======");
@@ -248,8 +251,8 @@ public class DroneScene implements GLEventListener, KeyListener {
         filled = !filled;
     }
 
-    private void setAnimate() {
-        animateEnabled = !animateEnabled;
+    private void setCamera() {
+        cameraSwitch = !cameraSwitch;
     }
 
     private void setGuide() {
@@ -264,23 +267,23 @@ public class DroneScene implements GLEventListener, KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        if(key == KeyEvent.VK_A){
+        if (key == KeyEvent.VK_A) {
             drone.setTurningMovement(Movement.LEFT_TURN);
         }
-        if(key == KeyEvent.VK_W){
+        if (key == KeyEvent.VK_W) {
             drone.setHorizontalMovement(Movement.FORWARD);
         }
-        if(key == KeyEvent.VK_S){
+        if (key == KeyEvent.VK_S) {
             drone.setHorizontalMovement(Movement.BACKWARD);
         }
-        if(key == KeyEvent.VK_D){
+        if (key == KeyEvent.VK_D) {
             drone.setTurningMovement(Movement.RIGHT_TURN);
         }
-        if(key == KeyEvent.VK_UP){
+        if (key == KeyEvent.VK_UP) {
             drone.setVerticalMovement(Movement.UPWARDS);
         }
-     
-        if(key == KeyEvent.VK_DOWN){
+
+        if (key == KeyEvent.VK_DOWN) {
             drone.setVerticalMovement(Movement.DOWNWARDS);
         }
     }
@@ -288,20 +291,18 @@ public class DroneScene implements GLEventListener, KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
         int key = e.getKeyCode();
-        
-        if(key == KeyEvent.VK_A || key == KeyEvent.VK_D){
+
+        if (key == KeyEvent.VK_A || key == KeyEvent.VK_D) {
             drone.setTurningMovement(Movement.HOVER);
         }
-        
-        if(key == KeyEvent.VK_W || key == KeyEvent.VK_S){
+
+        if (key == KeyEvent.VK_W || key == KeyEvent.VK_S) {
             drone.setHorizontalMovement(Movement.HOVER);
         }
-        if(key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN){
+        if (key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN) {
             drone.setVerticalMovement(Movement.HOVER);
         }
-        
-        
-        
+
         if (key == KeyEvent.VK_E) {
             if (filled) {
                 System.out.println("Wireframe enabled");
@@ -312,12 +313,7 @@ public class DroneScene implements GLEventListener, KeyListener {
         }
 
         if (key == KeyEvent.VK_SPACE) {
-            if (animateEnabled) {
-                System.out.println("Animation paused");
-            } else {
-                System.out.println("Animation restart");
-            }
-            setAnimate();
+            setCamera();
         }
 
         if (key == KeyEvent.VK_1) {
