@@ -24,20 +24,15 @@ import java.io.InputStream;
 
 public class SurfaceMapping implements Drawable {
 
-    private float yPos;
     private BufferedImage bufferedImage;
     private Texture surfaceTexture;
     private float transparency = 1.0f;
 
-    public SurfaceMapping(float yPos, String textureSurface) {
-        this.yPos = yPos;
-        boolean texture = !textureSurface.isEmpty();
-        if (texture) {
+    public SurfaceMapping( String textureSurface) {
             try {
                 setSurfaceTexture(textureSurface);
             } catch (IOException e) {
                 e.printStackTrace();
-            }
         }
     }
 
@@ -58,26 +53,26 @@ public class SurfaceMapping implements Drawable {
 
         Colour.setDynamicColourRGBA(new Colour(1.0f, 1.0f, 1.0f), transparency, gl);
 
-        for (int i = -50; i < 50; i++) {
-            for (int j = -50; j < 50; j++) {
+        for (int i = -125; i < 125; i++) {
+            for (int j = -125; j < 125; j++) {
                 gl.glBegin(filled ? GL2.GL_QUADS : GL.GL_LINE_LOOP);
 
                 // makes a 1x1 square grid.
                 gl.glNormal3f(0.0f, 1.0f, 0.0f);
                 gl.glTexCoord2d(2, 1);
-                gl.glVertex3f(i, yPos, j);
+                gl.glVertex3f(i, 0, j);
 
                 gl.glNormal3f(0.0f, 1.0f, 0.0f);
                 gl.glTexCoord2d(2 , 2);
-                gl.glVertex3d(i + 1, yPos, j);
+                gl.glVertex3d(i + 1, 0, j);
 
                 gl.glNormal3f(0, 1.0f, 0);
                 gl.glTexCoord2d(1, 2);
-                gl.glVertex3d(i + 1, yPos / 0.5, j + 1);
+                gl.glVertex3d(i + 1, 0, j + 1);
 
                 gl.glNormal3f(0, 1.0f, 0);
                 gl.glTexCoord2d(1, 1);
-                gl.glVertex3d(i, yPos * 0.5, j + 1);
+                gl.glVertex3d(i, 0, j + 1);
 
                 gl.glEnd();
             }

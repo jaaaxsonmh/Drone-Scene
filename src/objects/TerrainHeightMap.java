@@ -27,6 +27,7 @@ public class TerrainHeightMap implements Drawable {
     private double[][] heightMap;
     private int width, height;
     private float transparency = 1.0f;
+    private Texture terrainTexture;
 
     public TerrainHeightMap(String map) {
         try {
@@ -37,59 +38,90 @@ public class TerrainHeightMap implements Drawable {
 
         width = bufferedImage.getWidth();
         height = bufferedImage.getHeight();
-        heightMap = new double[height][width];
-        //for loop for to rgb /height width/
-//        int rgb = bufferedImage.getRGB(width, height);
-//        int grey = rgb & 255;
+        heightMap = new double[height + 2][width + 2];
+        for (int y = 0; y < heightMap.length - 1; y++) {
+            for (int x = 0; x < heightMap[y].length - 1; x++) {
+                heightMap[x][y] = getHeight(x, y, bufferedImage);
+                heightMap[x][y + 1] = getHeight(x, y + 1, bufferedImage);
+            }
+        }
     }
 
     private void setHeightMap(String heightMap) throws IOException {
         this.bufferedImage = ImageIO.read(new File(heightMap));
+        this.terrainTexture = TextureIO.newTexture(new FileInputStream("src\\src\\images\\sand-texture-seamless.jpg"), false, ".jpg");
     }
 
-    public void setTransparency(float transparency) {
-        this.transparency = transparency;
+    private double getHeight(int x, int y, BufferedImage bufferedImage) {
+        try {
+            int max_c = 256 * 256 * 256;
+            int h = 20;
+
+            double rgb = bufferedImage.getRGB(x, y);
+            rgb += max_c / 2f;
+            rgb /= max_c / 2f;
+            rgb *= h;
+            return rgb;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private double getHeight(int x, int y) {
+        try {
+            return heightMap[x][y];
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private double getNormal(int j, int i) {
+        try {
+            double v1 = heightMap[j][i + 1] - heightMap[j][i];
+            double v2 = heightMap[j + 1][i] - heightMap[j][i];
+            double v3 = heightMap[j][i - 1] - heightMap[j][i];
+            double v4 = heightMap[j - 1][i] - heightMap[j][i];
+
+            double n1 = v1 * v2;
+            double n2 = v2 * v3;
+            double n3 = v3 * v4;
+            double n4 = v4 * v1;
+
+            return (n1 + n2 + n3 + n4) / Math.abs(n1 + n2 + n3 + n4);
+
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     @Override
     public void draw(GL2 gl, GLU glu, GLUquadric quadric, boolean filled) {
-        //start displaylist gl.
-        Colour.setDynamicColourRGBA(new Colour(1.0f, 1.0f, 1.0f), transparency, gl);
-        // System.out.println((int)length +" " + (int) width);
-        for (int i = 0; i < width; i++) {
-            // being (strip)
-            gl.glBegin(filled ? GL2.GL_TRIANGLE_STRIP : GL.GL_LINE_LOOP);
+        gl.glPushMatrix();
+        gl.glTranslated(-125, -10, -125);
+        for (int i = 0; i < height; i++) {
+            terrainTexture.enable(gl);
+            terrainTexture.bind(gl);
 
-            for (int j = 0; j < height; j++) {
-
-                // t
-                // n
-                // v (x, z)
+            terrainTexture.setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
+            terrainTexture.setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
+            terrainTexture.setTexParameteri(gl, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_NEAREST);
+            terrainTexture.setTexParameteri(gl, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
+            gl.glBegin(GL2.GL_TRIANGLE_STRIP);
+            for (int j = 0; j < width; j++) {
                 
-                // t
-                // n
-                // v (x, z + 1)
-                
-                gl.glNormal3f(0.0f, 1.0f, 0.0f);
-                gl.glTexCoord2d(2, 1);
-                gl.glVertex3f(i, 0, j);
+                gl.glNormal3d(0.0, getNormal(j, i), 0.0);
+                gl.glTexCoord2d(j, i);
+                gl.glVertex3d(j, getHeight(j, i), i);
 
-                gl.glNormal3f(0.0f, 1.0f, 0.0f);
-                gl.glTexCoord2d(2, 2);
-                gl.glVertex3d(i + 1, 0, j);
-
-                gl.glNormal3f(0, 1.0f, 0);
-                gl.glTexCoord2d(1, 2);
-                gl.glVertex3d(i + 1, 0, j + 1);
-
-                gl.glNormal3f(0, 1.0f, 0);
-                gl.glTexCoord2d(1, 1);
-                gl.glVertex3d(i, 0, j + 1);
+                gl.glNormal3d(0.0, getNormal(j, i + 1), 0.0);
+                gl.glTexCoord2d(j, i + 1);
+                gl.glVertex3d(j, getHeight(j, i + 1), i + 1);
 
             }
             gl.glEnd();
         }
-
+        terrainTexture.disable(gl);
+        gl.glPopMatrix();
         // flush display list
     }
 }

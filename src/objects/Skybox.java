@@ -14,15 +14,16 @@ import java.io.IOException;
 
 public class Skybox implements Drawable {
 
-    private float whiteMaterial[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    private float greyMaterial[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+    private float whiteMaterial[] = {1.0f, 1.0f, 1.0f, 1.0f};
+    private float greyMaterial[] = {0.5f, 0.5f, 0.5f, 1.0f};
     private Colour white = new Colour(1.0f, 1.0f, 1.0f, 1.0f);
+    private double domeRotation = 180, sphereX = 0, sphereZ = 0;
 
     private Texture skyDome;
 
     public Skybox() {
         try {
-            skyDome = TextureIO.newTexture(new File("src\\images\\skydome.jpg"), true);
+            skyDome = TextureIO.newTexture(new File("src\\src\\images\\skydome.jpg"), true);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -54,14 +55,26 @@ public class Skybox implements Drawable {
 
         Colour.setColourRGBA(white, gl);
 
+        gl.glTranslated(sphereX, 0, sphereZ);
         gl.glScaled(50.0, 50.0, 50.0);
-        //Rotate Sphere so that
-        gl.glRotated(180, 0, 1, 0);
+        gl.glRotated(domeRotation, 0, 1, 0);
         gl.glRotated(-90, 1, 0, 0);
         glu.gluQuadricTexture(quadric, true);
         glu.gluSphere(quadric, 1.0, 40, 40);
 
         gl.glPopMatrix();
         skyDome.disable(gl);
+    }
+
+    public void animate() {
+        domeRotation += 0.2f;
+    }
+
+    public void setSphereX(double sphereX) {
+        this.sphereX = sphereX;
+    }
+
+    public void setSphereZ(double sphereZ) {
+        this.sphereZ = sphereZ;
     }
 }

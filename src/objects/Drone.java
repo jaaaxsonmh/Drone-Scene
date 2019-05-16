@@ -174,14 +174,16 @@ public class Drone implements Drawable {
         }
 
         if (horizontalMovementState == Movement.FORWARD) {
-            x += 0.05f * Math.sin(Math.toRadians(droneRootRotation));
-            z += 0.05f * Math.cos(Math.toRadians(droneRootRotation));
+            x += 0.05f * Math.sin(Math.toRadians(droneRootRotation)) * speed;
+            z += 0.05f * Math.cos(Math.toRadians(droneRootRotation)) * speed;
         } else if (horizontalMovementState == Movement.BACKWARD) {
-            x -= 0.05f * Math.sin(Math.toRadians(droneRootRotation));
-            z -= 0.05f * Math.cos(Math.toRadians(droneRootRotation));
+            x -= 0.05f * Math.sin(Math.toRadians(droneRootRotation)) * speed;
+            z -= 0.05f * Math.cos(Math.toRadians(droneRootRotation)) * speed;
         }
 
-        if(horizontalMovementState != Movement.HOVER || turningState != Movement.HOVER || verticalMovementState != Movement.HOVER)
+        if(horizontalMovementState != Movement.HOVER 
+                || turningState != Movement.HOVER 
+                || verticalMovementState != Movement.HOVER)
             bladeRotation += 4.0f * speed;
     }
 

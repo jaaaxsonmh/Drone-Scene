@@ -37,15 +37,8 @@ public class Lighting {
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, sceneDiffuse, 0);
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, sceneSpecular, 0);
 
-        float position1[] = {-50, 5, -50, 0};
-        gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, position1, 0);
-        gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_AMBIENT, sceneAmbient, 0);
-        gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, sceneDiffuse, 0);
-        gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPECULAR, sceneSpecular, 0);
-
         gl.glEnable(GL2.GL_LIGHTING);
         gl.glEnable(GL2.GL_LIGHT0);
-        gl.glEnable(GL2.GL_LIGHT1);
 
         // lets use use standard color functions
         gl.glEnable(GL2.GL_COLOR_MATERIAL);
