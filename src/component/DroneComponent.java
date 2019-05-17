@@ -10,6 +10,7 @@ import java.util.LinkedList;
 /**
  * @author Jack Hosking
  * studentID 16932920
+ * scale: 1 unit: 1 meter
  */
 
 public abstract class DroneComponent implements Drawable {

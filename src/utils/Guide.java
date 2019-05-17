@@ -6,8 +6,9 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
 
 /**
- * @author Jack Hosking
+ * @author Jack Hosking 
  * studentID 16932920
+ * scale: 1 unit : 1 meter
  */
 
 public class Guide implements Drawable{

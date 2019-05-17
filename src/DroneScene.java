@@ -24,7 +24,7 @@ import objects.SurfaceMapping;
 import objects.TerrainHeightMap;
 
 /**
- * @author Jack Hosking studentID 16932920
+ * @author Jack Hosking studentID 16932920 scale: 1 unit: 1 meter
  */
 public class DroneScene implements GLEventListener, KeyListener {
 
@@ -59,8 +59,8 @@ public class DroneScene implements GLEventListener, KeyListener {
     public void display(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();
 
-        // calculate the position from the trackballCamera for fog.
-        float positionRelativeToCam = (float) trackballCamera.getDistance() * (float) trackballCamera.getFieldOfView();
+//         calculate the position from the trackballCamera for fog.
+//        float positionRelativeToCam = (float) trackballCamera.getDistance() * (float) trackballCamera.getFieldOfView();
 
         // select and clear the model-view matrix
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
@@ -80,25 +80,30 @@ public class DroneScene implements GLEventListener, KeyListener {
         spotLightPosition[2] = (float) (drone.getZ() + 2.0f * Math.cos(Math.toRadians(drone.getRotation())));
         lighting.drawDroneSpotlight(gl, spotLightPosition);
 
-        skybox.animate();
+        if(!cameraSwitch){
+            skybox.animate();
         skybox.draw(gl, glu, quadric, filled);
         skybox.setSphereX(drone.getX());
         skybox.setSphereZ(drone.getZ());
+        }
+        
         drone.animate(animatorSpeed);
         drone.draw(gl, glu, quadric, filled);
 
-        waterSurfaceTexture.draw(gl, glu, quadric, filled);
         terrainMap.draw(gl, glu, quadric, filled);
-//        drawSurface(gl, 2);
-//        if (guideEnabled) {
-//            guide.draw(gl, glu, quadric, filled);
-//        }
-//
-//        if (drone.getY() + 1.0 < 0) {
-//            setUpFog(gl, positionRelativeToCam);
-//        } else if (drone.getY() + 1.0 > 0) {
-//            gl.glDisable(GL2.GL_FOG);
-//        }
+        gl.glEnable(GL2.GL_BLEND);
+        waterSurfaceTexture.draw(gl, glu, quadric, filled);
+        gl.glDisable(GL2.GL_BLEND);
+
+        if (guideEnabled) {
+            guide.draw(gl, glu, quadric, filled);
+        }
+
+        if (drone.getY() + 1.0 < 0) {
+            setUpUnderwaterFog(gl);
+        } else if (drone.getY() + 1.0 > 0) {
+            gl.glDisable(GL2.GL_FOG);
+        }
         gl.glFlush();
     }
 
@@ -137,6 +142,7 @@ public class DroneScene implements GLEventListener, KeyListener {
             trackballCamera.draw(gl);
             trackballCamera.setLookAt(drone.getX(), drone.getY(), drone.getZ());
             trackballCamera.setDistance(10);
+            
         } else {
             camera.draw(gl);
             camera.setLookAt(drone.getX(), drone.getY(), drone.getZ());
@@ -165,7 +171,7 @@ public class DroneScene implements GLEventListener, KeyListener {
         skybox = new Skybox();
         terrainMap = new TerrainHeightMap("src\\src\\images\\terrain.png");
         waterSurfaceTexture = new SurfaceMapping("src\\src\\images\\water-pool-texture-seamless.jpg");
-        waterSurfaceTexture.setTransparency(0.9f);
+        waterSurfaceTexture.setTransparency(0.5f);
         trackballCamera.setDistance(15);
         trackballCamera.setFieldOfView(40);
 
@@ -183,8 +189,8 @@ public class DroneScene implements GLEventListener, KeyListener {
 
     }
 
-    private void setUpFog(GL2 gl, float positionRelativeToCam) {
-        float fogDensity = 0.05f;
+    private void setUpUnderwaterFog(GL2 gl) {
+        float fogDensity = 0.07f;
 
         gl.glEnable(GL2.GL_FOG);
         gl.glFogfv(GL2.GL_FOG_COLOR, FOG_COLOUR, 0);
@@ -204,7 +210,7 @@ public class DroneScene implements GLEventListener, KeyListener {
         System.out.println("1: Slow");
         System.out.println("2: NORMAL ANIMATION SPEED");
         System.out.println("3: FAST ANIMATION SPEED");
-        System.out.println("======= DISABLED =======");
+        System.out.println("===== Player Movement =====");
         System.out.println("A / Z: Increase and decrease length");
         System.out.println("S / X: Increase and decrease width");
         System.out.println("D / C: Increase and decrease height\n");

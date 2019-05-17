@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * @author Jack Hosking studentID 16932920
+ * @author Jack Hosking studentID 16932920 scale: 1 unit : 1 meter
  */
 public class TerrainHeightMap implements Drawable {
 
@@ -97,7 +97,9 @@ public class TerrainHeightMap implements Drawable {
     @Override
     public void draw(GL2 gl, GLU glu, GLUquadric quadric, boolean filled) {
         gl.glPushMatrix();
-        gl.glTranslated(-125, -10, -125);
+        gl.glTranslated(-200, 0, -200);
+        Colour.setDynamicColourRGBA(new Colour(1.0f, 1.0f, 1.0f), transparency, gl);
+
         for (int i = 0; i < height; i++) {
             terrainTexture.enable(gl);
             terrainTexture.bind(gl);
@@ -108,7 +110,7 @@ public class TerrainHeightMap implements Drawable {
             terrainTexture.setTexParameteri(gl, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
             gl.glBegin(GL2.GL_TRIANGLE_STRIP);
             for (int j = 0; j < width; j++) {
-                
+
                 gl.glNormal3d(0.0, getNormal(j, i), 0.0);
                 gl.glTexCoord2d(j, i);
                 gl.glVertex3d(j, getHeight(j, i), i);

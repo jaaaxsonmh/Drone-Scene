@@ -8,12 +8,14 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * @author Jack Hosking studentID 16932920
+ * @author Jack Hosking 
+ * studentID 16932920
+ * scale: 1 unit: 1 meter
  */
 public class TrackballCamera implements MouseListener, MouseMotionListener, MouseWheelListener {
 
     // some hard limitations to camera values
-    private static final double MIN_DISTANCE = 1;
+    private static final double MIN_DISTANCE = 100;
     private static final double MIN_FOV = 1;
     private static final double MAX_FOV = 80;
 

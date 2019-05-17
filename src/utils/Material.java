@@ -2,6 +2,12 @@ package utils;
 
 import com.jogamp.opengl.GL2;
 
+/**
+ * @author Jack Hosking 
+ * studentID 16932920
+ * scale: 1 unit : 1 meter
+ */
+
 public class Material {
     private float[] lightAmbiance = {1, 0.7f, 0, 0.02f};
     private float[] lightDiffuse = {1, 0.7f, 0, 0.02f};

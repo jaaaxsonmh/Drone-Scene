@@ -3,8 +3,9 @@ package utils;
 import com.jogamp.opengl.GL2;
 
 /**
- * @author Jack Hosking
+ * @author Jack Hosking 
  * studentID 16932920
+ * scale: 1 unit : 1 meter
  */
 
 public class Colour {

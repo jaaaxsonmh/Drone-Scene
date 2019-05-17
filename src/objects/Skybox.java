@@ -12,6 +12,12 @@ import utils.Drawable;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * @author Jack Hosking 
+ * studentID 16932920
+ * scale: 1 unit : 1 meter
+ */
+
 public class Skybox implements Drawable {
 
     private float whiteMaterial[] = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -56,7 +62,7 @@ public class Skybox implements Drawable {
         Colour.setColourRGBA(white, gl);
 
         gl.glTranslated(sphereX, 0, sphereZ);
-        gl.glScaled(50.0, 50.0, 50.0);
+        gl.glScaled(50.0, 40.0, 50.0);
         gl.glRotated(domeRotation, 0, 1, 0);
         gl.glRotated(-90, 1, 0, 0);
         glu.gluQuadricTexture(quadric, true);

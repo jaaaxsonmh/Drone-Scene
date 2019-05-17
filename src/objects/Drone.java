@@ -13,7 +13,9 @@ import utils.Material;
 import utils.Rand;
 
 /**
- * @author Jack Hosking studentID 16932920
+ * @author Jack Hosking 
+ * studentID 16932920
+ * scale: 1 unit : 1 meter
  */
 public class Drone implements Drawable {
 
@@ -161,6 +163,7 @@ public class Drone implements Drawable {
         //else upwards state then decrease Y axis
         //if state is hovering then we dont want to change y values
         //so no extra condition for hover state -> null state / do nothing 
+        
         if (verticalMovementState == Movement.DOWNWARDS) {
             y -= 0.02f * speed;
         } else if (verticalMovementState == Movement.UPWARDS) {

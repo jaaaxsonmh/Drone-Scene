@@ -18,10 +18,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * @author Jack Hosking
+ * @author Jack Hosking 
  * studentID 16932920
+ * scale: 1 unit : 1 meter
  */
-
 public class SurfaceMapping implements Drawable {
 
     private BufferedImage bufferedImage;
@@ -53,8 +53,8 @@ public class SurfaceMapping implements Drawable {
 
         Colour.setDynamicColourRGBA(new Colour(1.0f, 1.0f, 1.0f), transparency, gl);
 
-        for (int i = -125; i < 125; i++) {
-            for (int j = -125; j < 125; j++) {
+        for (int i = -200; i < 200; i++) {
+            for (int j = -200; j < 200; j++) {
                 gl.glBegin(filled ? GL2.GL_QUADS : GL.GL_LINE_LOOP);
 
                 // makes a 1x1 square grid.
