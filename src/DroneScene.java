@@ -51,6 +51,8 @@ public class DroneScene implements GLEventListener, KeyListener {
     private SurfaceMapping waterSurfaceTexture;
     private TerrainHeightMap terrainMap;
 
+
+
     private DroneScene() {
         drone = new Drone(1.0f);
         glut = new GLUT();
@@ -63,16 +65,40 @@ public class DroneScene implements GLEventListener, KeyListener {
 //         calculate the position from the trackballCamera for fog.
 //        float positionRelativeToCam = (float) trackballCamera.getDistance() * (float) trackballCamera.getFieldOfView();
         // select and clear the model-view matrix
+
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glLoadIdentity();
 
-        productionMode(gl, cameraSwitch);
-
         // change the rendering style based on key presses
         int style = filled ? GLU.GLU_FILL : GLU.GLU_LINE;
         glu.gluQuadricDrawStyle(quadric, style);
+
+        if (drone.getY() + 1.0 <= 0) {
+            createUnderGroundFog(gl);
+            gl.glDisable(GL2.GL_LIGHT1);
+
+        } else if (drone.getY() + 1.0 >= 0) {
+            createAboveGroundFog(gl);
+            gl.glEnable(GL2.GL_LIGHT1);
+        }
+
+        productionMode(gl, cameraSwitch);
+
+        if (!cameraSwitch) {
+            gl.glEnable(GL2.GL_FOG);
+            skybox.animate();
+            skybox.draw(gl, glu, quadric, filled);
+            skybox.setSphereX(drone.getX());
+            skybox.setSphereZ(drone.getZ());
+        } else {
+            gl.glDisable(GL2.GL_FOG);
+//            System.out.println("reached condition");
+        }
+
+        lighting.setSceneLighting(gl);
+        lighting.animate();
 
         float[] spotLightPosition = {0, 0, 0, 1f};
         spotLightPosition[0] = (float) (drone.getX() + 2.0f * Math.sin(Math.toRadians(drone.getRotation())));
@@ -80,12 +106,7 @@ public class DroneScene implements GLEventListener, KeyListener {
         spotLightPosition[2] = (float) (drone.getZ() + 2.0f * Math.cos(Math.toRadians(drone.getRotation())));
         lighting.drawDroneSpotlight(gl, spotLightPosition);
 
-        if (!cameraSwitch) {
-            skybox.animate();
-            skybox.draw(gl, glu, quadric, filled);
-            skybox.setSphereX(drone.getX());
-            skybox.setSphereZ(drone.getZ());
-        }
+
 
         drone.animate(animatorSpeed);
         drone.draw(gl, glu, quadric, filled);
@@ -99,11 +120,6 @@ public class DroneScene implements GLEventListener, KeyListener {
             guide.draw(gl, glu, quadric, filled);
         }
 
-        if (drone.getY() + 1.0 <= 0) {
-            createUnderGroundFog(gl);
-        } else if (drone.getY() + 1.0 >= 0) {
-            createAboveGroundFog(gl);
-        }
         gl.glFlush();
     }
 
@@ -142,7 +158,6 @@ public class DroneScene implements GLEventListener, KeyListener {
             trackballCamera.draw(gl);
             trackballCamera.setLookAt(drone.getX(), drone.getY(), drone.getZ());
             trackballCamera.setDistance(10);
-
         } else {
             camera.draw(gl);
             camera.setLookAt(drone.getX(), drone.getY(), drone.getZ());
@@ -169,8 +184,8 @@ public class DroneScene implements GLEventListener, KeyListener {
         quadric = glu.gluNewQuadric();
         guide = new Guide();
         skybox = new Skybox();
-        terrainMap = new TerrainHeightMap("src\\src\\images\\terrain.png");
-        waterSurfaceTexture = new SurfaceMapping("src\\src\\images\\water-pool-texture-seamless.jpg");
+        terrainMap = new TerrainHeightMap("src\\images\\terrain.png");
+        waterSurfaceTexture = new SurfaceMapping("src\\images\\water-pool-texture-seamless.jpg");
         waterSurfaceTexture.setTransparency(0.5f);
         trackballCamera.setDistance(15);
         trackballCamera.setFieldOfView(40);
@@ -180,8 +195,6 @@ public class DroneScene implements GLEventListener, KeyListener {
 
         camera.setFieldOfView(40);
         camera.setDistance(15);
-        // use the lights
-        this.lighting.setSceneLighting(gl);
 
         gl.glShadeModel(GL2.GL_SMOOTH);
         gl.glEnable(GL2.GL_DEPTH_TEST);

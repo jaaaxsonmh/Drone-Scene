@@ -50,7 +50,7 @@ public class TerrainHeightMap implements Drawable {
 
     private void setHeightMap(String heightMap) throws IOException {
         this.bufferedImage = ImageIO.read(new File(heightMap));
-        this.terrainTexture = TextureIO.newTexture(new FileInputStream("src\\src\\images\\sand-texture-seamless.jpg"), false, ".jpg");
+        this.terrainTexture = TextureIO.newTexture(new FileInputStream("src\\images\\sand-texture-seamless.jpg"), false, ".jpg");
     }
 
     private double getHeight(int x, int y, BufferedImage bufferedImage) {
@@ -111,15 +111,13 @@ public class TerrainHeightMap implements Drawable {
             terrainTexture.setTexParameteri(gl, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_NEAREST);
             gl.glBegin(GL2.GL_TRIANGLE_STRIP);
             for (int j = 0; j < width; j++) {
-
                 gl.glNormal3d(0.0, getNormal(j, i), 0.0);
                 gl.glTexCoord2d(j, i);
                 gl.glVertex3d(j, getHeight(j, i), i);
 
-                gl.glNormal3d(0.0, getNormal(j, i), 0.0);
+                gl.glNormal3d(0.0, getNormal(j, i + 1), 0.0);
                 gl.glTexCoord2d(j, i + 1);
-                gl.glVertex3d(j, getHeight(j, i), i + 1);
-
+                gl.glVertex3d(j, getHeight(j, i + 1), i + 1);
             }
             gl.glEnd();
         }
