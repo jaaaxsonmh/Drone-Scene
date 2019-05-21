@@ -31,7 +31,8 @@ public class DroneScene implements GLEventListener, KeyListener {
     private Guide guide;
     private Drone drone;
 
-    private static final float[] FOG_COLOUR = new float[]{0.0f, 0.89803f, 0.98823f, 0.2f};
+    private final float[] FOG_UNDER_GROUND = new float[]{0.0f, 0.89803f, 0.98823f};
+    private final float[] FOG_ABOVE_GROUND = new float[]{0.6f, 0.6f, 0.6f};
     private final Colour WATER_COLOUR = new Colour(0.73333f, 0.87058823529f, 0.98823f, 0.2f);
     private static GLCanvas canvas;
 
@@ -61,7 +62,6 @@ public class DroneScene implements GLEventListener, KeyListener {
 
 //         calculate the position from the trackballCamera for fog.
 //        float positionRelativeToCam = (float) trackballCamera.getDistance() * (float) trackballCamera.getFieldOfView();
-
         // select and clear the model-view matrix
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
@@ -80,29 +80,29 @@ public class DroneScene implements GLEventListener, KeyListener {
         spotLightPosition[2] = (float) (drone.getZ() + 2.0f * Math.cos(Math.toRadians(drone.getRotation())));
         lighting.drawDroneSpotlight(gl, spotLightPosition);
 
-        if(!cameraSwitch){
+        if (!cameraSwitch) {
             skybox.animate();
-        skybox.draw(gl, glu, quadric, filled);
-        skybox.setSphereX(drone.getX());
-        skybox.setSphereZ(drone.getZ());
+            skybox.draw(gl, glu, quadric, filled);
+            skybox.setSphereX(drone.getX());
+            skybox.setSphereZ(drone.getZ());
         }
-        
+
         drone.animate(animatorSpeed);
         drone.draw(gl, glu, quadric, filled);
 
-        terrainMap.draw(gl, glu, quadric, filled);
+        terrainMap.drawDisplayList(gl);
         gl.glEnable(GL2.GL_BLEND);
-        waterSurfaceTexture.draw(gl, glu, quadric, filled);
+        waterSurfaceTexture.drawDisplayList(gl);
         gl.glDisable(GL2.GL_BLEND);
 
         if (guideEnabled) {
             guide.draw(gl, glu, quadric, filled);
         }
 
-        if (drone.getY() + 1.0 < 0) {
-            setUpUnderwaterFog(gl);
-        } else if (drone.getY() + 1.0 > 0) {
-            gl.glDisable(GL2.GL_FOG);
+        if (drone.getY() + 1.0 <= 0) {
+            createUnderGroundFog(gl);
+        } else if (drone.getY() + 1.0 >= 0) {
+            createAboveGroundFog(gl);
         }
         gl.glFlush();
     }
@@ -142,7 +142,7 @@ public class DroneScene implements GLEventListener, KeyListener {
             trackballCamera.draw(gl);
             trackballCamera.setLookAt(drone.getX(), drone.getY(), drone.getZ());
             trackballCamera.setDistance(10);
-            
+
         } else {
             camera.draw(gl);
             camera.setLookAt(drone.getX(), drone.getY(), drone.getZ());
@@ -175,6 +175,9 @@ public class DroneScene implements GLEventListener, KeyListener {
         trackballCamera.setDistance(15);
         trackballCamera.setFieldOfView(40);
 
+        waterSurfaceTexture.draw(gl, glu, quadric, filled);
+        terrainMap.draw(gl, glu, quadric, filled);
+
         camera.setFieldOfView(40);
         camera.setDistance(15);
         // use the lights
@@ -189,11 +192,21 @@ public class DroneScene implements GLEventListener, KeyListener {
 
     }
 
-    private void setUpUnderwaterFog(GL2 gl) {
+    private void createUnderGroundFog(GL2 gl) {
         float fogDensity = 0.07f;
 
         gl.glEnable(GL2.GL_FOG);
-        gl.glFogfv(GL2.GL_FOG_COLOR, FOG_COLOUR, 0);
+        gl.glFogfv(GL2.GL_FOG_COLOR, FOG_UNDER_GROUND, 0);
+        gl.glFogf(GL2.GL_FOG_MODE, GL2.GL_EXP2);
+        gl.glFogf(GL2.GL_FOG_DENSITY, fogDensity);
+    }
+
+    private void createAboveGroundFog(GL2 gl) {
+        float fogDensity = 0.025f;
+
+        gl.glEnable(GL2.GL_FOG);
+        gl.glFogfv(GL2.GL_FOG_COLOR, FOG_ABOVE_GROUND, 0);
+        gl.glFogf(GL2.GL_FOG_START, 1);
         gl.glFogf(GL2.GL_FOG_MODE, GL2.GL_EXP2);
         gl.glFogf(GL2.GL_FOG_DENSITY, fogDensity);
     }
@@ -359,21 +372,6 @@ public class DroneScene implements GLEventListener, KeyListener {
                 System.out.println("Guide enabled");
             }
             setGuide();
-        }
-
-        if (key != KeyEvent.VK_1
-                && key != KeyEvent.VK_2
-                && key != KeyEvent.VK_3
-                && key != KeyEvent.VK_SPACE
-                && key != KeyEvent.VK_W
-                && key != KeyEvent.VK_A
-                && key != KeyEvent.VK_S
-                && key != KeyEvent.VK_D
-                && key != KeyEvent.VK_Z
-                && key != KeyEvent.VK_X
-                && key != KeyEvent.VK_C
-                && key != KeyEvent.VK_G) {
-            System.out.println("\nNot a valid command");
         }
     }
 }

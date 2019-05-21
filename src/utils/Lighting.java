@@ -8,9 +8,9 @@ import com.jogamp.opengl.GL2;
 public class Lighting {
 
     private int droneSpotlight = GL2.GL_LIGHT3;
-    private float sceneDiffuse[] = {1.0f, 1.0f, 1.0f, 1};
-    private float sceneAmbient[] = {0, 0, 0, 1};
-    private float sceneSpecular[] = {0.3f, 0.3f, 0.3f, 1};
+    private float sceneDiffuse[] = {0.5f, 0.5f, 0.5f, 1};
+    private float sceneAmbient[] = {0.5f, 0.5f, 0.5f, 1};
+    private float sceneSpecular[] = {0.1f, 0.1f, 0.1f, 1};
 
     public Lighting(GL2 gl) {
         gl.glLightf(droneSpotlight, GL2.GL_SPOT_CUTOFF, 90);
@@ -31,14 +31,13 @@ public class Lighting {
 
     public void setSceneLighting(GL2 gl) {
 
-        float position0[] = {0, 10, 0, 0};
-        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, position0, 0);
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, sceneAmbient, 0);
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, sceneDiffuse, 0);
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, sceneSpecular, 0);
 
         gl.glEnable(GL2.GL_LIGHTING);
         gl.glEnable(GL2.GL_LIGHT0);
+        
         // lets use use standard color functions
         gl.glEnable(GL2.GL_COLOR_MATERIAL);
         gl.glEnable(GL2.GL_NORMALIZE);

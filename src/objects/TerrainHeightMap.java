@@ -28,6 +28,7 @@ public class TerrainHeightMap implements Drawable {
     private int width, height;
     private float transparency = 1.0f;
     private Texture terrainTexture;
+    private int createDisplayList;
 
     public TerrainHeightMap(String map) {
         try {
@@ -96,8 +97,8 @@ public class TerrainHeightMap implements Drawable {
 
     @Override
     public void draw(GL2 gl, GLU glu, GLUquadric quadric, boolean filled) {
-        gl.glPushMatrix();
-        gl.glTranslated(-200, 0, -200);
+        createDisplayList = gl.glGenLists(1);
+        gl.glNewList(createDisplayList, GL2.GL_COMPILE);
         Colour.setDynamicColourRGBA(new Colour(1.0f, 1.0f, 1.0f), transparency, gl);
 
         for (int i = 0; i < height; i++) {
@@ -115,15 +116,21 @@ public class TerrainHeightMap implements Drawable {
                 gl.glTexCoord2d(j, i);
                 gl.glVertex3d(j, getHeight(j, i), i);
 
-                gl.glNormal3d(0.0, getNormal(j, i + 1), 0.0);
+                gl.glNormal3d(0.0, getNormal(j, i), 0.0);
                 gl.glTexCoord2d(j, i + 1);
-                gl.glVertex3d(j, getHeight(j, i + 1), i + 1);
+                gl.glVertex3d(j, getHeight(j, i), i + 1);
 
             }
             gl.glEnd();
         }
         terrainTexture.disable(gl);
+        gl.glEndList();
+    }
+    
+    public void drawDisplayList(GL2 gl){
+        gl.glPushMatrix();
+        gl.glTranslated(-200, 0, -200);
+        gl.glCallList(createDisplayList);
         gl.glPopMatrix();
-        // flush display list
     }
 }

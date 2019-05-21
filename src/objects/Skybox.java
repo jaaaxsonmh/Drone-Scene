@@ -59,7 +59,6 @@ public class Skybox implements Drawable {
         drawTexture(gl);
         gl.glPushMatrix();
 
-        Colour.setColourRGBA(white, gl);
 
         gl.glTranslated(sphereX, 0, sphereZ);
         gl.glScaled(50.0, 40.0, 50.0);

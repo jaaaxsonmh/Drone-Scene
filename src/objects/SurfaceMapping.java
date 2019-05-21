@@ -27,6 +27,7 @@ public class SurfaceMapping implements Drawable {
     private BufferedImage bufferedImage;
     private Texture surfaceTexture;
     private float transparency = 1.0f;
+    private int createDisplayList;
 
     public SurfaceMapping( String textureSurface) {
             try {
@@ -46,6 +47,9 @@ public class SurfaceMapping implements Drawable {
 
     @Override
     public void draw(GL2 gl, GLU glu, GLUquadric quadric, boolean filled) {
+        createDisplayList = gl.glGenLists(1);
+        gl.glNewList(createDisplayList, GL2.GL_COMPILE);
+        
         surfaceTexture.enable(gl);
         surfaceTexture.bind(gl);
         surfaceTexture.setTexParameteri(gl, GL.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
@@ -78,5 +82,12 @@ public class SurfaceMapping implements Drawable {
             }
         }
         surfaceTexture.disable(gl);
+         gl.glEndList();
+    }
+    
+    public void drawDisplayList(GL2 gl){
+        gl.glPushMatrix();
+        gl.glCallList(createDisplayList);
+        gl.glPopMatrix();
     }
 }

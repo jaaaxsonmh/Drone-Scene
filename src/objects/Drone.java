@@ -52,9 +52,6 @@ public class Drone implements Drawable {
         //Drone Body :: is the root
         root = new DroneBody(radius, height, Axis.X);
 
-//        drawDroneLightHolder();
-//        drawDroneLight();
-
         // Construct the right arm shape
         drawDroneRightArm();
         drawDroneRightArmElbow();
@@ -215,6 +212,7 @@ public class Drone implements Drawable {
             gl.glScaled(height, height, radius);
             glu.gluSphere(glUquadric, 1, 25, 20);
             gl.glPopMatrix();
+            
         }
     }
 
