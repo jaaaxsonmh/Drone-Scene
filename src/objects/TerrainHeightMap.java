@@ -1,6 +1,5 @@
 package objects;
 
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
@@ -15,7 +14,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * @author Jack Hosking studentID 16932920 scale: 1 unit : 1 meter
@@ -23,7 +21,6 @@ import java.io.InputStream;
 public class TerrainHeightMap implements Drawable {
 
     private BufferedImage bufferedImage;
-    private Image map;
     private double[][] heightMap;
     private int width, height;
     private float transparency = 1.0f;
@@ -50,7 +47,7 @@ public class TerrainHeightMap implements Drawable {
 
     private void setHeightMap(String heightMap) throws IOException {
         this.bufferedImage = ImageIO.read(new File(heightMap));
-        this.terrainTexture = TextureIO.newTexture(new FileInputStream("src\\src\\images\\sand-texture-seamless.jpg"), false, ".jpg");
+        this.terrainTexture = TextureIO.newTexture(new FileInputStream("src\\images\\sand-texture-seamless.jpg"), false, ".jpg");
     }
 
     private double getHeight(int x, int y, BufferedImage bufferedImage) {

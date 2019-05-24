@@ -72,7 +72,7 @@ public class DroneScene implements GLEventListener, KeyListener {
         int style = filled ? GLU.GLU_FILL : GLU.GLU_LINE;
         glu.gluQuadricDrawStyle(quadric, style);
 
-        if (drone.getY() + 1.0 <= 0) {
+        if (drone.getY() + 1.0 <= waterSurfaceTexture.getHeight()) {
             createUnderGroundFog(gl);
             if (drone.getY() + 1.0 <= -4.0) {
                 gl.glDisable(GL2.GL_LIGHT1);
@@ -184,8 +184,8 @@ public class DroneScene implements GLEventListener, KeyListener {
         quadric = glu.gluNewQuadric();
         guide = new Guide();
         skybox = new Skybox();
-        terrainMap = new TerrainHeightMap("src\\src\\images\\terrain.png");
-        waterSurfaceTexture = new SurfaceMapping("src\\src\\images\\water-pool-texture-seamless.jpg");
+        terrainMap = new TerrainHeightMap("src\\images\\terrain.png");
+        waterSurfaceTexture = new SurfaceMapping("src\\images\\water-pool-texture-seamless.jpg");
         waterSurfaceTexture.setTransparency(0.5f);
         trackballCamera.setDistance(15);
         trackballCamera.setFieldOfView(40);

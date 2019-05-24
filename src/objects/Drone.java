@@ -10,7 +10,6 @@ import component.Movement;
 import utils.Colour;
 import utils.Drawable;
 import utils.Material;
-import utils.Rand;
 
 /**
  * @author Jack Hosking 

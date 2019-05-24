@@ -98,4 +98,8 @@ public class SurfaceMapping implements Drawable {
         }
         tide += tidePull;
     }
+
+    public double getHeight() {
+        return tide;
+    }
 }

@@ -22,14 +22,13 @@ public class Skybox implements Drawable {
 
     private float whiteMaterial[] = {1.0f, 1.0f, 1.0f, 1.0f};
     private float greyMaterial[] = {0.5f, 0.5f, 0.5f, 1.0f};
-    private Colour white = new Colour(1.0f, 1.0f, 1.0f, 1.0f);
     private double domeRotation = 180, sphereX = 0, sphereZ = 0;
 
     private Texture skyDome;
 
     public Skybox() {
         try {
-            skyDome = TextureIO.newTexture(new File("src\\src\\images\\skydome.jpg"), true);
+            skyDome = TextureIO.newTexture(new File("src\\images\\skydome.jpg"), true);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
