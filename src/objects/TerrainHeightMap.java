@@ -50,7 +50,7 @@ public class TerrainHeightMap implements Drawable {
 
     private void setHeightMap(String heightMap) throws IOException {
         this.bufferedImage = ImageIO.read(new File(heightMap));
-        this.terrainTexture = TextureIO.newTexture(new FileInputStream("src\\images\\sand-texture-seamless.jpg"), false, ".jpg");
+        this.terrainTexture = TextureIO.newTexture(new FileInputStream("src\\src\\images\\sand-texture-seamless.jpg"), false, ".jpg");
     }
 
     private double getHeight(int x, int y, BufferedImage bufferedImage) {

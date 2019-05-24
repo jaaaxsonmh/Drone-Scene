@@ -18,9 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * @author Jack Hosking 
- * studentID 16932920
- * scale: 1 unit : 1 meter
+ * @author Jack Hosking studentID 16932920 scale: 1 unit : 1 meter
  */
 public class SurfaceMapping implements Drawable {
 
@@ -28,12 +26,14 @@ public class SurfaceMapping implements Drawable {
     private Texture surfaceTexture;
     private float transparency = 1.0f;
     private int createDisplayList;
+    private double tide = 0;
+    private double tidePull = 0.0005;
 
-    public SurfaceMapping( String textureSurface) {
-            try {
-                setSurfaceTexture(textureSurface);
-            } catch (IOException e) {
-                e.printStackTrace();
+    public SurfaceMapping(String textureSurface) {
+        try {
+            setSurfaceTexture(textureSurface);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -49,7 +49,7 @@ public class SurfaceMapping implements Drawable {
     public void draw(GL2 gl, GLU glu, GLUquadric quadric, boolean filled) {
         createDisplayList = gl.glGenLists(1);
         gl.glNewList(createDisplayList, GL2.GL_COMPILE);
-        
+
         surfaceTexture.enable(gl);
         surfaceTexture.bind(gl);
         surfaceTexture.setTexParameteri(gl, GL.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
@@ -67,7 +67,7 @@ public class SurfaceMapping implements Drawable {
                 gl.glVertex3f(i, 0, j);
 
                 gl.glNormal3f(0.0f, 1.0f, 0.0f);
-                gl.glTexCoord2d(2 , 2);
+                gl.glTexCoord2d(2, 2);
                 gl.glVertex3d(i + 1, 0, j);
 
                 gl.glNormal3f(0, 1.0f, 0);
@@ -82,12 +82,20 @@ public class SurfaceMapping implements Drawable {
             }
         }
         surfaceTexture.disable(gl);
-         gl.glEndList();
+        gl.glEndList();
     }
-    
-    public void drawDisplayList(GL2 gl){
+
+    public void drawDisplayList(GL2 gl) {
         gl.glPushMatrix();
+                        gl.glTranslated(0, tide, 0);
         gl.glCallList(createDisplayList);
         gl.glPopMatrix();
+    }
+
+    public void animate() {
+        if (tide > 1.0 || tide <0.0) {
+            tidePull *= -1;
+        }
+        tide += tidePull;
     }
 }

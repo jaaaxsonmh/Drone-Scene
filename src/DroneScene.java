@@ -51,8 +51,6 @@ public class DroneScene implements GLEventListener, KeyListener {
     private SurfaceMapping waterSurfaceTexture;
     private TerrainHeightMap terrainMap;
 
-
-
     private DroneScene() {
         drone = new Drone(1.0f);
         glut = new GLUT();
@@ -65,7 +63,6 @@ public class DroneScene implements GLEventListener, KeyListener {
 //         calculate the position from the trackballCamera for fog.
 //        float positionRelativeToCam = (float) trackballCamera.getDistance() * (float) trackballCamera.getFieldOfView();
         // select and clear the model-view matrix
-
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
         gl.glMatrixMode(GL2.GL_MODELVIEW);
@@ -77,9 +74,12 @@ public class DroneScene implements GLEventListener, KeyListener {
 
         if (drone.getY() + 1.0 <= 0) {
             createUnderGroundFog(gl);
-            gl.glDisable(GL2.GL_LIGHT1);
-
-        } else if (drone.getY() + 1.0 >= 0) {
+            if (drone.getY() + 1.0 <= -4.0) {
+                gl.glDisable(GL2.GL_LIGHT1);
+            } else {
+                gl.glEnable(GL2.GL_LIGHT1);
+            }
+        } else {
             createAboveGroundFog(gl);
             gl.glEnable(GL2.GL_LIGHT1);
         }
@@ -106,14 +106,14 @@ public class DroneScene implements GLEventListener, KeyListener {
         spotLightPosition[2] = (float) (drone.getZ() + 2.0f * Math.cos(Math.toRadians(drone.getRotation())));
         lighting.drawDroneSpotlight(gl, spotLightPosition);
 
-
-
         drone.animate(animatorSpeed);
         drone.draw(gl, glu, quadric, filled);
 
         terrainMap.drawDisplayList(gl);
         gl.glEnable(GL2.GL_BLEND);
         waterSurfaceTexture.drawDisplayList(gl);
+        waterSurfaceTexture.animate();
+        
         gl.glDisable(GL2.GL_BLEND);
 
         if (guideEnabled) {
@@ -184,8 +184,8 @@ public class DroneScene implements GLEventListener, KeyListener {
         quadric = glu.gluNewQuadric();
         guide = new Guide();
         skybox = new Skybox();
-        terrainMap = new TerrainHeightMap("src\\images\\terrain.png");
-        waterSurfaceTexture = new SurfaceMapping("src\\images\\water-pool-texture-seamless.jpg");
+        terrainMap = new TerrainHeightMap("src\\src\\images\\terrain.png");
+        waterSurfaceTexture = new SurfaceMapping("src\\src\\images\\water-pool-texture-seamless.jpg");
         waterSurfaceTexture.setTransparency(0.5f);
         trackballCamera.setDistance(15);
         trackballCamera.setFieldOfView(40);
@@ -202,7 +202,8 @@ public class DroneScene implements GLEventListener, KeyListener {
 
     @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-
+        camera.newWindowSize(width, height);
+        trackballCamera.newWindowSize(width, height);
     }
 
     private void createUnderGroundFog(GL2 gl) {
@@ -226,7 +227,7 @@ public class DroneScene implements GLEventListener, KeyListener {
 
     public static void main(String[] args) {
         Frame frame = new Frame("Jack's 3D Drone(y) Scene");
-        frame.setResizable(false);
+        frame.setResizable(true);
 
         // key mapping console prints
         System.out.println("------- Key mapping -------");
