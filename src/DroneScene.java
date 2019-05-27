@@ -33,16 +33,12 @@ public class DroneScene implements GLEventListener, KeyListener {
 
     private final float[] FOG_UNDER_GROUND = new float[]{0.0f, 0.89803f, 0.98823f};
     private final float[] FOG_ABOVE_GROUND = new float[]{0.6f, 0.6f, 0.6f};
-    private final Colour WATER_COLOUR = new Colour(0.73333f, 0.87058823529f, 0.98823f, 0.2f);
     private static GLCanvas canvas;
 
-    private GLUT glut;
     private GLU glu;
     private GLUquadric quadric;
     private boolean filled = true, cameraSwitch = false, guideEnabled = false;
     private float animatorSpeed = 1.0f;
-    private final long TIME_DELAY = 300L;
-    public Material materials = new Material();
 
     private TrackballCamera trackballCamera = new TrackballCamera(canvas);
     private ThirdPersonCamera camera = new ThirdPersonCamera(canvas);
@@ -53,7 +49,6 @@ public class DroneScene implements GLEventListener, KeyListener {
 
     private DroneScene() {
         drone = new Drone(1.0f);
-        glut = new GLUT();
     }
 
     @Override
@@ -68,7 +63,6 @@ public class DroneScene implements GLEventListener, KeyListener {
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glLoadIdentity();
 
-        // change the rendering style based on key presses
         int style = filled ? GLU.GLU_FILL : GLU.GLU_LINE;
         glu.gluQuadricDrawStyle(quadric, style);
 
@@ -94,7 +88,6 @@ public class DroneScene implements GLEventListener, KeyListener {
             skybox.setSphereZ(drone.getZ());
         } else {
             gl.glDisable(GL2.GL_FOG);
-//            System.out.println("reached condition");
         }
 
         lighting.setSceneLighting(gl);
@@ -121,36 +114,6 @@ public class DroneScene implements GLEventListener, KeyListener {
         }
 
         gl.glFlush();
-    }
-
-    private final Colour white = new Colour(1.0f, 1.0f, 1.0f, 1.0f);
-
-    private void drawSurface(GL2 gl, int height) {
-        for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < 20; j++) {
-                gl.glBegin(filled ? GL2.GL_QUADS : GL.GL_LINE_LOOP);
-
-                Colour.setColourRGBA(WATER_COLOUR, gl);
-                // makes a 1x1 square grid.
-                gl.glNormal3f(0.0f, 1.0f, 0.0f);
-                gl.glTexCoord2d(2, 1);
-                gl.glVertex3f(i, height, j);
-
-                gl.glNormal3f(0.0f, 1.0f, 0.0f);
-                gl.glTexCoord2d(2, 2);
-                gl.glVertex3d(i + 1, height, j);
-
-                gl.glNormal3f(0, 1.0f, 0);
-                gl.glTexCoord2d(1, 2);
-                gl.glVertex3d(i + 1, height, j + 1);
-
-                gl.glNormal3f(0, 1.0f, 0);
-                gl.glTexCoord2d(1, 1);
-                gl.glVertex3d(i, height, j + 1);
-
-                gl.glEnd();
-            }
-        }
     }
 
     private void productionMode(GL2 gl, boolean cameraChoice) {

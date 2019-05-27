@@ -9,20 +9,14 @@ import com.jogamp.opengl.util.texture.TextureIO;
 import utils.Colour;
 import utils.Drawable;
 
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * @author Jack Hosking studentID 16932920 scale: 1 unit : 1 meter
  */
 public class SurfaceMapping implements Drawable {
 
-    private BufferedImage bufferedImage;
     private Texture surfaceTexture;
     private float transparency = 1.0f;
     private int createDisplayList;
@@ -87,13 +81,13 @@ public class SurfaceMapping implements Drawable {
 
     public void drawDisplayList(GL2 gl) {
         gl.glPushMatrix();
-                        gl.glTranslated(0, tide, 0);
+        gl.glTranslated(0, tide, 0);
         gl.glCallList(createDisplayList);
         gl.glPopMatrix();
     }
 
     public void animate() {
-        if (tide > 1.0 || tide <0.0) {
+        if (tide > 1.0 || tide < 0.0) {
             tidePull *= -1;
         }
         tide += tidePull;

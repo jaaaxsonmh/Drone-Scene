@@ -44,16 +44,6 @@ public class Colour {
         return new Colour(red * scale, green * scale, blue * scale);
     }
 
-    private int convertToInt(double value) {
-        return (value < 0.0) ? 0 : (value > 1.0) ? 255 :
-                (int) (value * 255.0);
-    }
-
-    private int convertToColour() {
-        return (0xff << 24) | (convertToInt (red) << 16) |
-                (convertToInt (green) << 8) | convertToInt (blue);
-    }
-
     public static void setColourRGBA(Colour colour, GL2 gl) {
         gl.glColor4f(colour.red, colour.green, colour.blue, colour.alpha);
     }

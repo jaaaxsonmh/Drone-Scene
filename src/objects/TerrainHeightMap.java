@@ -10,7 +10,6 @@ import utils.Drawable;
 
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,7 +22,6 @@ public class TerrainHeightMap implements Drawable {
     private BufferedImage bufferedImage;
     private double[][] heightMap;
     private int width, height;
-    private float transparency = 1.0f;
     private Texture terrainTexture;
     private int createDisplayList;
 
@@ -96,6 +94,7 @@ public class TerrainHeightMap implements Drawable {
     public void draw(GL2 gl, GLU glu, GLUquadric quadric, boolean filled) {
         createDisplayList = gl.glGenLists(1);
         gl.glNewList(createDisplayList, GL2.GL_COMPILE);
+        float transparency = 1.0f;
         Colour.setDynamicColourRGBA(new Colour(1.0f, 1.0f, 1.0f), transparency, gl);
 
         for (int i = 0; i < height; i++) {

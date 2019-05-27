@@ -6,7 +6,6 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
-import utils.Colour;
 import utils.Drawable;
 
 import java.io.File;

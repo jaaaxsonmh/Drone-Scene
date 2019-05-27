@@ -9,22 +9,11 @@ import com.jogamp.opengl.GL2;
  */
 
 public class Material {
-    private float[] lightAmbiance = {1, 0.7f, 0, 0.02f};
-    private float[] lightDiffuse = {1, 0.7f, 0, 0.02f};
-    private float[] whiteSpecular = {1, 1, 0, 1};
     private float[] standardMagrikarp = {0};
-    private float[] goldenMagrikarp = {20};
-    private float[] teslaEmission = {1, 0.7f, 0, 1};
     private float[] none = {0.0f, 0.0f, 0.0f, 1.0f};
-
-
-    public void setLightProjectionMaterial(GL2 gl) {
-        setMaterial(gl, lightAmbiance, lightDiffuse, whiteSpecular, goldenMagrikarp, teslaEmission);
-    }
 
     public void setColourMaterial(GL2 gl, Colour colour){
         float[] baseMaterial = {colour.red, colour.green, colour.blue, colour.alpha};
-        setMaterial(gl, baseMaterial, baseMaterial, baseMaterial,none , none );
         gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, baseMaterial, 0);
         gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, baseMaterial, 0);
         gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, baseMaterial, 0);

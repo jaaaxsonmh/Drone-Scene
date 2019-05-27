@@ -3,7 +3,6 @@ package objects;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
-import com.jogamp.opengl.util.gl2.GLUT;
 import component.Axis;
 import component.DroneComponent;
 import component.Movement;
@@ -12,37 +11,26 @@ import utils.Drawable;
 import utils.Material;
 
 /**
- * @author Jack Hosking 
+ * @author Jack Hosking
  * studentID 16932920
  * scale: 1 unit : 1 meter
  */
 public class Drone implements Drawable {
 
-    private final Colour fish = new Colour(1.0f, 0.65490f, 0.14901f, 1.0f);
-    private final Colour white = new Colour(1.0f, 1.0f, 1.0f, 1.0f);
-    private final Colour pupil = new Colour(0.0f, 0.0f, 0.0f, 1.0f);
-
+    private final Colour orange = new Colour(1.0f, 0.65490f, 0.14901f, 1.0f);
+    private final Colour gray = new Colour(0.3f, 0.3f, 0.3f, 1.0f);
+    public Material materials = new Material();
     private float x;
     private float y = 5;
     private float z;
-
     private float height;
     private float radius;
     private float bladeRotation = 0, droneRootRotation = 0;
-
-    private double[] eqn0 = {0, 0.0, 1.0, 0};
-    private double[] eqn1 = {0, 0.0, -1.0, 0};
-    private double[] eqn2 = {0, 0.5, 0.0, 0};
-
-    private GLUT glut = new GLUT();
     private DroneComponent root;
-    private DroneLightHolder droneLightHolder;
     private DroneArm droneRightArm, droneLeftArm;
     private DroneArmElbow droneRightArmElbow, droneLeftArmElbow;
-    private DroneArmForearm droneArmForearm, droneLeftArmForearm;
+    private DroneArmForearm droneArmForearm;
     private Movement turningState = Movement.HOVER, horizontalMovementState = Movement.HOVER, verticalMovementState = Movement.HOVER;
-
-    public Material materials = new Material();
 
     public Drone(float size) {
         radius = size * 0.5f;
@@ -113,18 +101,6 @@ public class Drone implements Drawable {
         droneLeftArmElbow.addChild(droneArmForearm);
     }
 
-    private void drawDroneLightHolder() {
-        droneLightHolder = new DroneLightHolder(radius, height, Axis.X);
-        droneLightHolder.setTranslations(0, -height * 0.5, radius);
-        root.addChild(droneLightHolder);
-    }
-
-    private void drawDroneLight() {
-        DroneLight droneLight = new DroneLight(radius, height, Axis.X);
-        droneLight.setTranslations(0, height * 1.3, radius * 0.65);
-        droneLightHolder.addChild(droneLight);
-    }
-
     public float getX() {
         return x;
     }
@@ -147,9 +123,9 @@ public class Drone implements Drawable {
 
         gl.glTranslated(x, y, z);
         gl.glRotated(0 + droneRootRotation, 0, 1, 0);
-
         root.draw(gl, glu, glUquadric, filled);
         gl.glPopMatrix();
+        materials.clearMaterials(gl);
     }
 
     public void animate(float speed) {
@@ -159,7 +135,7 @@ public class Drone implements Drawable {
         //else upwards state then decrease Y axis
         //if state is hovering then we dont want to change y values
         //so no extra condition for hover state -> null state / do nothing 
-        
+
         if (verticalMovementState == Movement.DOWNWARDS) {
             y -= 0.02f * speed;
         } else if (verticalMovementState == Movement.UPWARDS) {
@@ -180,8 +156,8 @@ public class Drone implements Drawable {
             z -= 0.05f * Math.cos(Math.toRadians(droneRootRotation)) * speed;
         }
 
-        if(horizontalMovementState != Movement.HOVER 
-                || turningState != Movement.HOVER 
+        if (horizontalMovementState != Movement.HOVER
+                || turningState != Movement.HOVER
                 || verticalMovementState != Movement.HOVER)
             bladeRotation += 4.0f * speed;
     }
@@ -207,43 +183,11 @@ public class Drone implements Drawable {
         @Override
         public void drawNode(GL2 gl, GLU glu, GLUquadric glUquadric, boolean filled) {
             gl.glPushMatrix();
-            Colour.setColourRGBA(white, gl);
             gl.glScaled(height, height, radius);
+            materials.setColourMaterial(gl, gray);
             glu.gluSphere(glUquadric, 1, 25, 20);
             gl.glPopMatrix();
-            
-        }
-    }
 
-    public class DroneLight extends DroneComponent {
-
-        DroneLight(double radius, double height, Axis axis) {
-            super(radius, height, axis);
-        }
-
-        @Override
-        public void drawNode(GL2 gl, GLU glu, GLUquadric glUquadric, boolean filled) {
-            gl.glPushMatrix();
-            gl.glRotated(-45, 1, 0, 0);
-            gl.glScaled(radius, radius, radius);
-            glut.glutSolidCone(1, 1, 20, 10);
-            gl.glPopMatrix();
-        }
-    }
-
-    public class DroneLightHolder extends DroneComponent {
-
-        DroneLightHolder(double radius, double height, Axis axis) {
-            super(radius, height, axis);
-        }
-
-        @Override
-        public void drawNode(GL2 gl, GLU glu, GLUquadric glUquadric, boolean filled) {
-            gl.glPushMatrix();
-            gl.glRotated(45, 1, 0, 0);
-            gl.glScaled(radius * 0.1, radius * 0.1, radius * 0.3);
-            glu.gluCylinder(glUquadric, 1, 1, 1, 10, 10);
-            gl.glPopMatrix();
         }
     }
 
@@ -257,10 +201,10 @@ public class Drone implements Drawable {
         public void drawNode(GL2 gl, GLU glu, GLUquadric glUquadric, boolean filled) {
             gl.glPushMatrix();
 
-            Colour.setColourRGBA(fish, gl);
 
             gl.glRotated(90, 0, 1, 0);
             gl.glScaled(radius * 0.1, radius * 0.1, radius * 0.5);
+            materials.setColourMaterial(gl, gray);
             glu.gluCylinder(glUquadric, 1, 1, 1, 10, 10);
 
             gl.glPopMatrix();
@@ -276,8 +220,8 @@ public class Drone implements Drawable {
         @Override
         public void drawNode(GL2 gl, GLU glu, GLUquadric glUquadric, boolean filled) {
             gl.glPushMatrix();
-            Colour.setColourRGBA(fish, gl);
             gl.glScaled(radius * 0.1, radius * 0.1, radius * 0.1);
+            materials.setColourMaterial(gl, gray);
             glu.gluSphere(glUquadric, 1, 25, 20);
             gl.glPopMatrix();
         }
@@ -293,10 +237,10 @@ public class Drone implements Drawable {
         public void drawNode(GL2 gl, GLU glu, GLUquadric glUquadric, boolean filled) {
             gl.glPushMatrix();
 
-            Colour.setColourRGBA(fish, gl);
 
             gl.glRotated(-90, 1, 0, 0);
             gl.glScaled(radius * 0.1, radius * 0.1, radius * 0.5);
+            materials.setColourMaterial(gl, gray);
             glu.gluCylinder(glUquadric, 1, 1, 1, 10, 10);
 
             gl.glPopMatrix();
@@ -314,6 +258,7 @@ public class Drone implements Drawable {
             gl.glPushMatrix();
             gl.glRotated(bladeRotation, 0, 1, 0);
             gl.glScaled(radius / 5, radius / 8, 1);
+            materials.setColourMaterial(gl, orange);
             glu.gluSphere(glUquadric, 2 * radius / 3, 20, 20);
             gl.glPopMatrix();
         }
