@@ -6,14 +6,11 @@ import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.util.FPSAnimator;
-import com.jogamp.opengl.util.gl2.GLUT;
 import component.Movement;
 import objects.Drone;
 import objects.Skybox;
-import utils.Colour;
 import utils.Guide;
 import utils.Lighting;
-import utils.Material;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
